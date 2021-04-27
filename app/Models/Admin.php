@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class Admin extends Authenticatable
 {
-    use Notifiable, HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that should be hidden for arrays.
@@ -29,13 +29,4 @@ class User extends Authenticatable
     ];
 
     protected $guarded = ['created_at', 'updated_at'];
-
-
-    public function scopeClient($query) {
-        return $query->where('user_role', 'client');
-    }
-
-    public function scopeRenter($query) {
-        return $query->where('user_role', 'renter');
-    }
 }

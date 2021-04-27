@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d6d9737218354b77a87bb9c8f14d557",
+    "content-hash": "040431e66df9423a7b86fc4c15692484",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -978,6 +978,70 @@
                 "source": "https://github.com/guzzle/psr7/tree/1.8.1"
             },
             "time": "2021-03-21T16:25:00+00:00"
+        },
+        {
+            "name": "kossa/algerian-cities",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kossa/algerian-cities.git",
+                "reference": "61ee0bd0fe6d0d5cf3b6c24a43a0b7a9c47f3a01"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kossa/algerian-cities/zipball/61ee0bd0fe6d0d5cf3b6c24a43a0b7a9c47f3a01",
+                "reference": "61ee0bd0fe6d0d5cf3b6c24a43a0b7a9c47f3a01",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^5.0|^6.0|^7.0|^8.0|^9.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0",
+                "phpstan/phpstan": "^0.12.9",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Kossa\\AlgerianCities\\Providers\\AlgerianCitiesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kossa\\AlgerianCities\\": "src/"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "kouceyla",
+                    "email": "hadjikouceyla@gmail.com"
+                }
+            ],
+            "description": "A Laravel package to create/load wilayas and communes of Algeria",
+            "homepage": "https://github.com/kossa/algerian-cities",
+            "keywords": [
+                "Algeria",
+                "Wilaya",
+                "cities",
+                "commune",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/kossa/algerian-cities/issues",
+                "source": "https://github.com/kossa/algerian-cities/tree/v3.0.1"
+            },
+            "time": "2020-11-02T06:17:58+00:00"
         },
         {
             "name": "laravel/framework",

@@ -110,6 +110,7 @@
       <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
       <path value="$PROJECT_DIR$/vendor/cherif/algerian-mobile-phone-number-laravel" />
       <path value="$PROJECT_DIR$/vendor/cherif/algerian-mobile-phone-number" />
+      <path value="$PROJECT_DIR$/vendor/kossa/algerian-cities" />
     </include_path>
   </component>
   <component name="PhpUnit">

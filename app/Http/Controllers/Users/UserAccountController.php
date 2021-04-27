@@ -3,25 +3,14 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use App\Models\Role;
 use App\Models\User;
-use Cherif\AlgerianMobilePhoneNumber\Laravel\Rules\AlgerianMobilePhoneNumberRule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class UserAccountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -37,9 +26,8 @@ class UserAccountController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed',
             'phone_number' => 'required|regex:/^0[567]{1}[0-9]{8}$/i',
-            'address' => 'required',
             'dob' => 'required|date',
-            'role_name' => 'required|exists:roles,role_name',
+            'user_role' => 'required|in:client,renter',
         ];
         $validated = Validator::make($request->all(), $rules);
         if($validated->fails()) {
@@ -50,49 +38,71 @@ class UserAccountController extends Controller
         $user->fname = $request->fname;
         $user->lname = $request->lname;
         $user->email = $request->email;
-        $user->password = $request->password;
+        $user->password = bcrypt($request->password);
         $user->phone_number = $request->phone_number;
-        $user->address = $request->address;
         $user->dob = $request->dob;
-
-        $role = Role::where('role_name', $request->role_name)->first();
-        $user->role_name = $role->id;
+        $user->user_role = $request->user_role;
         $user->save();
 
-        return response()->json(['success'=> true], 200);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
+        return response()->json(['success'=> true], 201);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param  int  $id
-     * @return Response
+     * @param User $user
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $rules = [
+            'fname' => 'required|min:3|max:30',
+            'lname' => 'required|min:3|max:30',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'required|confirmed',
+            'phone_number' => 'required|regex:/^0[567]{1}[0-9]{8}$/i',
+            'address' => 'required',
+            'dob' => 'required|date',
+        ];
+
+        $validated = Validator::make($request->all(), $rules);
+        if($validated->fails()) {
+            return response()->json(['success' => false, 'errors' =>$validated->errors()], 403);
+        }
+        $inspect = Gate::inspect('update', $user);
+        if($inspect->denied()) {
+            return response()->json(['success' => false, 'errors' =>$inspect->message()], 403);
+        }
+
+        $user->fname = $request->fname;
+        $user->lname = $request->lname;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->phone_number = $request->phone_number;
+        $user->dob = $request->dob;
+        $user->save();
+
+        return response()->json(['success'=> true], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return Response
+     * @param User $user
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        $inspect = Gate::inspect('delete', $user);
+        if($inspect->denied()) {
+            return response()->json(['success' => false, 'errors' =>$inspect->message()], 403);
+        }
+        try {
+            $isDeleted = $user->delete();
+        }catch (\Exception $e) {
+            return \response()->json(['success' => false, 'errors' => $e->getMessage()], 403);
+        }
+        return response()->json(['success' => true], 200);
     }
 }
