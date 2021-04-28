@@ -7,7 +7,9 @@ namespace Renter;
 use App\Models\User;
 use Database\Seeders\WilayaCommuneSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Kossa\AlgerianCities\Commune;
 use Kossa\AlgerianCities\Wilaya;
 use Tests\TestCase;
@@ -54,7 +56,8 @@ class RenterPropertiesTest extends TestCase
         ];
 
         $this->actingAs($renter)->post('/properties', $data)
-            ->assertStatus(403);
+            ->assertStatus(403)
+            ->assertJsonValidationErrors('title');
         $this->assertDatabaseCount('properties',0);
     }
 
@@ -116,6 +119,7 @@ class RenterPropertiesTest extends TestCase
         $response = $this->actingAs($renter)->json('POST', '/properties', $data);
 
         $response->assertStatus(403);
+        $response->assertJsonValidationErrors('state');
         $this->assertDatabaseCount('properties',0);
     }
 
@@ -137,6 +141,7 @@ class RenterPropertiesTest extends TestCase
         $response = $this->actingAs($renter)->json('POST', '/properties', $data);
 
         $response->assertStatus(403);
+        $response->assertJsonValidationErrors('city');
         $this->assertDatabaseCount('properties',0);
     }
 
@@ -157,6 +162,8 @@ class RenterPropertiesTest extends TestCase
         ];
         $response = $this->actingAs($renter)->json('POST', '/properties', $data);
         $response->assertStatus(403);
+        $response->assertJsonValidationErrors('street');
+
         $this->assertDatabaseCount('properties',0);
     }
     /** @test */
@@ -175,6 +182,72 @@ class RenterPropertiesTest extends TestCase
         ];
         $response = $this->actingAs($renter)->json('POST', '/properties', $data);
         $response->assertStatus(403);
+        $response->assertJsonValidationErrors('price');
         $this->assertDatabaseCount('properties',0);
+    }
+    /** @test */
+    public function a_property_type_is_required() {
+        $this->withoutExceptionHandling();
+
+        $renter = User::factory()->create(['user_role' => 'renter']);
+        $this->seed(WilayaCommuneSeeder::class);
+        $data = [
+            'title' => 'prop 1',
+            'state' => 'Alger',
+            'city' => 'Alger Centre',
+            'street' => 'lorem ipsum',
+            'price' => 5000,
+            'description' => 'some text for description'
+        ];
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response->assertStatus(403);
+        $response->assertJsonValidationErrors('type');
+        $this->assertDatabaseCount('properties',0);
+    }
+
+    /** @test */
+    public function a_property_commune_in_correct_wilaya() {
+        $this->withoutExceptionHandling();
+
+        $renter = User::factory()->create(['user_role' => 'renter']);
+        $this->seed(WilayaCommuneSeeder::class);
+        $data = [
+            'title' => 'prop 1',
+            'state' => 'Alger',
+            'city' => 'Beni Aissi',
+            'street' => 'lorem ipsum',
+            'price' => 5000,
+            'type' => 'house',
+            'description' => 'some text for description'
+        ];
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response->assertStatus(403);
+        $this->assertDatabaseCount('properties',0);
+    }
+    /** @test */
+    public function a_property_picture_is_uploaded_and_saved() {
+
+        $this->withoutExceptionHandling();
+        Storage::fake('properties');
+        $picture = UploadedFile::fake()->image('pic.png');
+        $renter = User::factory()->create(['user_role' => 'renter']);
+        $this->seed(WilayaCommuneSeeder::class);
+        $data = [
+            'title' => 'prop 1',
+            'state' => 'Alger',
+            'city' => 'Alger Centre',
+            'street' => 'lorem ipsum',
+            'price' => 5000,
+            'type' => 'house',
+            'description' => 'some text for description',
+            'images' => [
+                'image_1' => $picture,
+            ]
+        ];
+
+
+        $response = $this->actingAs($renter)->post('/properties', $data)
+            ->assertStatus(201);
+        $this->assertDatabaseCount('images',1);
     }
 }

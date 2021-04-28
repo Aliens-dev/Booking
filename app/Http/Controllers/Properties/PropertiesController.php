@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Kossa\AlgerianCities\Commune;
 use Kossa\AlgerianCities\Wilaya;
+use function PHPUnit\Framework\assertEquals;
 
 class PropertiesController extends Controller
 {
@@ -25,15 +27,29 @@ class PropertiesController extends Controller
             'city' => ['required', Rule::in(communes())],
             'street' => 'required|min:3|max:255',
             'price' => 'required',
+            'type' => 'required',
+            'images' => 'required',
+            'images.*' => 'image|mimes:jpg,bmp,png',
         ];
 
         $validate = Validator::make($request->all(), $rules);
+
         if($validate->fails()) {
             return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
         }
+        $wilaya = Wilaya::where('name', $request->state)->first();
+        $commune = Commune::where('wilaya_id', $wilaya->id)->where('name', $request->city)->first();
+
+        if(! $commune) {
+            return response()->json(['success' => false, 'errors' => "Commune Name doesn't correspond to any Wilaya"],403);
+        }
+
+        foreach ($request->images as $image) {
+            
+        }
+        dd("here");
 
         $property = new Property();
-
         $property->title = $request->title;
         $property->state = $request->state;
         $property->city = $request->city;
@@ -42,6 +58,7 @@ class PropertiesController extends Controller
         $property->price = $request->price;
         $property->type = $request->type;
         $property->save();
+
         return response()->json(['success'=> true],201);
     }
 }
