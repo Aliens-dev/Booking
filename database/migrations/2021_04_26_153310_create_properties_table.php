@@ -22,6 +22,8 @@ class CreatePropertiesTable extends Migration
             $table->string('description');
             $table->double('price');
             $table->string('type');
+            $table->integer('rooms');
+            $table->string('video')->default('');
             $table->timestamps();
         });
     }

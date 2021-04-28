@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Kossa\AlgerianCities\Commune;
@@ -20,15 +21,15 @@ class PropertiesController extends Controller
 
     public function store(Request $request)
     {
-
         $rules = [
             'title' => 'required|min:3|max:100',
             'state' => ['required', Rule::in(wilayas())],
             'city' => ['required', Rule::in(communes())],
             'street' => 'required|min:3|max:255',
-            'price' => 'required',
+            'price' => 'required|integer|min:200',
             'type' => 'required',
-            'images' => 'required',
+            'rooms' => 'required|min:1|integer',
+            'images' => 'required|max:10',
             'images.*' => 'image|mimes:jpg,bmp,png',
         ];
 
@@ -43,12 +44,6 @@ class PropertiesController extends Controller
         if(! $commune) {
             return response()->json(['success' => false, 'errors' => "Commune Name doesn't correspond to any Wilaya"],403);
         }
-
-        foreach ($request->images as $image) {
-            
-        }
-        dd("here");
-
         $property = new Property();
         $property->title = $request->title;
         $property->state = $request->state;
@@ -57,7 +52,16 @@ class PropertiesController extends Controller
         $property->description = $request->description;
         $property->price = $request->price;
         $property->type = $request->type;
+        $property->rooms = $request->rooms;
         $property->save();
+
+        if($request->hasFile('images')) {
+            $images = $request->file('images');
+            foreach ($images as $image) {
+                $image_url = "uploads/" . $image->store($property->id);
+                $property->images()->create(['url' => $image_url]);
+            }
+        }
 
         return response()->json(['success'=> true],201);
     }

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DRIVER', 'local'),
+    'default' => env('FILESYSTEM_DRIVER', 'property'),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,19 +29,37 @@ return [
     */
 
     'disks' => [
-
+        /*
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
+        */
 
-        'public' => [
+        'property' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'root' => storage_path('app/public/property'),
+            'url' => env('APP_URL').'/uploads',
             'visibility' => 'public',
         ],
-
+        'client' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/client'),
+            'url' => env('APP_URL').'/uploads',
+            'visibility' => 'public',
+        ],
+        'renter' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/renter'),
+            'url' => env('APP_URL').'/uploads',
+            'visibility' => 'public',
+        ],
+        'admin' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/admin'),
+            'url' => env('APP_URL').'/uploads',
+            'visibility' => 'public',
+        ],
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -66,7 +84,7 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        public_path('uploads') => storage_path('app/public'),
     ],
 
 ];
