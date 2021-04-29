@@ -38,4 +38,8 @@ class User extends Authenticatable
     public function scopeRenter($query) {
         return $query->where('user_role', 'renter');
     }
+
+    public function properties() {
+        return $this->hasMany(Property::class,'user_id');
+    }
 }

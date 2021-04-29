@@ -20,3 +20,4 @@ Route::delete('/users/{user}', [UserAccountController::class, 'destroy']);
 
 Route::get('/properties', [PropertiesController::class, 'index']);
 Route::post('/properties', [PropertiesController::class, 'store']);
+Route::patch('/properties/{id}', [PropertiesController::class, 'update']);

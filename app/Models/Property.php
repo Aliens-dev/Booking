@@ -9,8 +9,13 @@ class Property extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['title','state','city','street','description', 'price', 'type', 'rooms','video'];
 
     public function images() {
         return $this->morphMany(Image::class,'imageable');
+    }
+
+    public function renter(){
+        return $this->belongsTo(User::class,'user_id');
     }
 }

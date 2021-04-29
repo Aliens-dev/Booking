@@ -44,16 +44,7 @@ class PropertiesController extends Controller
         if(! $commune) {
             return response()->json(['success' => false, 'errors' => "Commune Name doesn't correspond to any Wilaya"],403);
         }
-        $property = new Property();
-        $property->title = $request->title;
-        $property->state = $request->state;
-        $property->city = $request->city;
-        $property->street = $request->street;
-        $property->description = $request->description;
-        $property->price = $request->price;
-        $property->type = $request->type;
-        $property->rooms = $request->rooms;
-        $property->save();
+        $property = auth()->user()->properties()->create($request->all());
 
         if($request->hasFile('images')) {
             $images = $request->file('images');
@@ -64,5 +55,25 @@ class PropertiesController extends Controller
         }
 
         return response()->json(['success'=> true],201);
+    }
+
+    public function update(Request $request, $id) {
+        $property = Property::find($id);
+        $rules = [
+            'title' => 'required|min:3|max:100',
+            'state' => ['required', Rule::in(wilayas())],
+            'city' => ['required', Rule::in(communes())],
+            'street' => 'required|min:3|max:255',
+        ];
+
+        $validate = Validator::make($request->all(), $rules);
+
+        if($validate->fails()) {
+            return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
+        }
+
+        $property = auth()->user()->properties()->update($request->all());
+
+        return response()->json(['success' => true], 200);
     }
 }

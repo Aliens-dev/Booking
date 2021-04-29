@@ -24,7 +24,10 @@ class CreatePropertiesTable extends Migration
             $table->string('type');
             $table->integer('rooms');
             $table->string('video')->default('');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 
