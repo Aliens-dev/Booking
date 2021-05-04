@@ -12,48 +12,50 @@ class PriceServiceTest extends TestCase
     /** @test */
     public function is_fee_calculated_correctly_when_lower_than_5000() {
         $price = 1000;
-        $price_service = new PriceService($price);
+        $price_service = new PriceService(1,$price);
 
-        $this->assertEquals(500, $price_service->getFee());
+        $this->assertEquals(500, $price_service->getDayFee());
     }
 
     /** @test */
     public function is_fee_calculated_correctly_when_more_than_5000() {
         $price = 6000;
-        $price_service = new PriceService($price);
+        $price_service = new PriceService(1,$price);
 
-        $this->assertEquals(600, $price_service->getFee());
+        $this->assertEquals(600, $price_service->getDayFee());
     }
 
     /** @test */
     public function is_fee_calculated_correctly_when_equals_Zero() {
         $price = 0;
-        $price_service = new PriceService($price);
+        $price_service = new PriceService(1,$price);
 
-        $this->assertEquals(0, $price_service->getFee());
+        $this->assertEquals(0, $price_service->getDayFee());
     }
 
     /** @test */
-    public function is_Total_calculated_correctly_when_equals_Zero() {
-        $price = 0;
-        $price_service = new PriceService($price);
-
-        $this->assertEquals(0, $price_service->getTotal());
-    }
-
-    /** @test */
-    public function is_Total_calculated_correctly_when_more_than_5000() {
-        $price = 6000;
-        $price_service = new PriceService($price);
-
-        $this->assertEquals(6600, $price_service->getTotal());
-    }
-    /** @test */
-    public function is_Total_calculated_correctly_when_less_than_5000() {
+    public function get_total_fee_less_than_5000() {
         $price = 4000;
-        $price_service = new PriceService($price);
-
-        $this->assertEquals(4500, $price_service->getTotal());
+        $price_service = new PriceService(5,$price);
+        $this->assertEquals(2500, $price_service->getTotalFee());
+    }
+    /** @test */
+    public function get_total_fee_more_than_5000() {
+        $price = 6000;
+        $price_service = new PriceService(5,$price);
+        $this->assertEquals(3000, $price_service->getTotalFee());
+    }
+    /** @test */
+    public function get_total_price_when_less_than_5000() {
+        $price = 4000;
+        $price_service = new PriceService(5,$price);
+        $this->assertEquals(22500, $price_service->getTotalPrice());
+    }
+    /** @test */
+    public function get_total_price_when_more_than_5000() {
+        $price = 6000;
+        $price_service = new PriceService(5,$price);
+        $this->assertEquals(33000, $price_service->getTotalPrice());
     }
 }
 

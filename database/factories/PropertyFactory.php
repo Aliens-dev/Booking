@@ -27,7 +27,10 @@ class PropertyFactory extends Factory
             'city' => 'Alger Centre',
             'street' => $this->faker->streetAddress,
             'description' => $this->faker->text(150),
-            'price' => rand(150,10000),
+            'price' => rand(250,10000),
+            'bedrooms' => rand(1,10),
+            'bathrooms' => rand(1,10),
+            'beds' => rand(1,10),
             'type' => 'House',
             'rooms' => rand(1,5),
         ];

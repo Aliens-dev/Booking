@@ -4,15 +4,12 @@
 namespace Renter;
 
 
-use App\Models\User;
+use App\Models\Client;
+use App\Models\Renter;
 use Database\Seeders\WilayaCommuneSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Kossa\AlgerianCities\Commune;
-use Kossa\AlgerianCities\Wilaya;
 use Tests\TestCase;
 
 class RenterPropertiesTest extends TestCase
@@ -24,8 +21,7 @@ class RenterPropertiesTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake('property');
         $picture = UploadedFile::fake()->image('pic.png');
-
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -34,6 +30,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'stade 20 aout',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
             'images' => [
@@ -49,10 +48,64 @@ class RenterPropertiesTest extends TestCase
     }
 
     /** @test */
+    public function a_client_cannot_add_new_property() {
+        $this->withoutExceptionHandling();
+        Storage::fake('property');
+        $picture = UploadedFile::fake()->image('pic.png');
+        $client = Client::factory()->create();
+        $this->seed(WilayaCommuneSeeder::class);
+        $data = [
+            'title' => 'prop 1',
+            'state' => 'Alger',
+            'city' => 'Alger Centre',
+            'street' => 'stade 20 aout',
+            'price' => 5000,
+            'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
+            'description' => 'some text for description',
+            'rooms' => 3,
+            'images' => [
+                'image_1' => $picture,
+            ]
+        ];
+        $response = $this->actingAs($client)->json('POST', '/properties', $data);
+        $response->assertStatus(401);
+        $this->assertDatabaseCount('properties',0);
+        $this->assertDatabaseCount('images',0);
+    }
+    /** @test */
+    public function a_visitor_cannot_add_new_property() {
+
+        Storage::fake('property');
+        $picture = UploadedFile::fake()->image('pic.png');
+        $this->seed(WilayaCommuneSeeder::class);
+        $data = [
+            'title' => 'prop 1',
+            'state' => 'Alger',
+            'city' => 'Alger Centre',
+            'street' => 'stade 20 aout',
+            'price' => 5000,
+            'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
+            'description' => 'some text for description',
+            'rooms' => 3,
+            'images' => [
+                'image_1' => $picture,
+            ]
+        ];
+        $response = $this->json('POST', '/properties', $data)
+            ->assertStatus(401);
+    }
+
+    /** @test */
     public function a_property_title_is_required()
     {
         $this->withoutExceptionHandling();
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $data = [
             'title' => '',
             'state' => 'Alger',
@@ -60,6 +113,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'stade 20 aout',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -74,7 +130,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_title_min()
     {
         $this->withoutExceptionHandling();
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $data = [
             'title' => 'a',
             'state' => 'Alger',
@@ -82,6 +138,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'stade 20 aout',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -95,7 +154,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_title_max()
     {
         $this->withoutExceptionHandling();
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $data = [
             'title' => 'lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum',
             'state' => 'Alger',
@@ -103,6 +162,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'stade 20 aout',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -116,7 +178,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_state_only_if_exists() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -125,6 +187,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'stade 20 aout',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -139,7 +204,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_city_only_if_exists() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -148,6 +213,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'stade 20 aout',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -162,7 +230,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_street_is_required() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -171,6 +239,9 @@ class RenterPropertiesTest extends TestCase
             'street' => '',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -184,7 +255,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_price_is_required() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -192,6 +263,9 @@ class RenterPropertiesTest extends TestCase
             'city' => 'Alger Centre',
             'street' => 'lorem ipsum',
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -204,7 +278,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_price_cannot_be_decimal() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -212,6 +286,9 @@ class RenterPropertiesTest extends TestCase
             'city' => 'Alger Centre',
             'street' => 'lorem ipsum',
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
             'price' => 500.5,
@@ -225,7 +302,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_price_cannot_be_zero() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -233,6 +310,9 @@ class RenterPropertiesTest extends TestCase
             'city' => 'Alger Centre',
             'street' => 'lorem ipsum',
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
             'price' => 0,
@@ -247,7 +327,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_rooms_are_required() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -255,6 +335,9 @@ class RenterPropertiesTest extends TestCase
             'city' => 'Alger Centre',
             'street' => 'lorem ipsum',
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
         ];
         $response = $this->actingAs($renter)->json('POST', '/properties', $data);
@@ -266,7 +349,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_rooms_cannot_be_decimal() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -274,6 +357,9 @@ class RenterPropertiesTest extends TestCase
             'city' => 'Alger Centre',
             'street' => 'lorem ipsum',
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'rooms' => 3.3,
             'description' => 'some text for description',
         ];
@@ -287,7 +373,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_rooms_cannot_be_Zero() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -295,6 +381,9 @@ class RenterPropertiesTest extends TestCase
             'city' => 'Alger Centre',
             'street' => 'lorem ipsum',
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'rooms' => 0,
             'description' => 'some text for description',
         ];
@@ -308,7 +397,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_type_is_required() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -316,6 +405,9 @@ class RenterPropertiesTest extends TestCase
             'city' => 'Alger Centre',
             'street' => 'lorem ipsum',
             'price' => 5000,
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -329,7 +421,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_commune_in_correct_wilaya() {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -338,6 +430,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'lorem ipsum',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -351,7 +446,7 @@ class RenterPropertiesTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake('property');
         $picture = UploadedFile::fake()->image('pic.png');
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -360,6 +455,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'lorem ipsum',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
             'images' => [
@@ -375,7 +473,7 @@ class RenterPropertiesTest extends TestCase
     /** @test */
     public function a_property_picture_is_missing() {
         $this->withoutExceptionHandling();
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -384,6 +482,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'lorem ipsum',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
         ];
@@ -398,7 +499,7 @@ class RenterPropertiesTest extends TestCase
     /** @test */
     public function a_property_cannot_have_more_than_10_pictures() {
         $this->withoutExceptionHandling();
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
 
         Storage::fake('property');
         $pictures = [
@@ -424,6 +525,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'lorem ipsum',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
             'images' => $pictures
@@ -442,7 +546,7 @@ class RenterPropertiesTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake('property');
         $file = UploadedFile::fake()->create('document.pdf', 1024, 'application/pdf');
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -451,6 +555,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'lorem ipsum',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
             'images' => [
@@ -470,7 +577,7 @@ class RenterPropertiesTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake('property');
         $file = UploadedFile::fake()->create('document.pdf', 1024, 'application/pdf');
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $data = [
             'title' => 'prop 1',
@@ -479,6 +586,9 @@ class RenterPropertiesTest extends TestCase
             'street' => 'lorem ipsum',
             'price' => 5000,
             'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
             'images' => [
@@ -490,5 +600,87 @@ class RenterPropertiesTest extends TestCase
             ->assertStatus(403)
             ->assertJsonValidationErrors('images.image_1');
         $this->assertDatabaseCount('images',0);
+    }
+
+    /** @test */
+    public function a_property_bedrooms_required() {
+        $this->withoutExceptionHandling();
+        Storage::fake('property');
+        $picture = UploadedFile::fake()->image('pic.png');
+        $renter = Renter::factory()->create();
+        $this->seed(WilayaCommuneSeeder::class);
+        $data = [
+            'title' => 'prop 1',
+            'state' => 'Alger',
+            'city' => 'Alger Centre',
+            'street' => 'stade 20 aout',
+            'price' => 5000,
+            'type' => 'house',
+            'bathrooms' => 3,
+            'beds' => 3,
+            'description' => 'some text for description',
+            'rooms' => 3,
+            'images' => [
+                'image_1' => $picture,
+            ]
+        ];
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+
+        $response->assertStatus(403)->assertJsonValidationErrors('bedrooms');
+        $this->assertDatabaseCount('properties',0);
+    }
+    /** @test */
+    public function a_property_bathrooms_required() {
+        $this->withoutExceptionHandling();
+        Storage::fake('property');
+        $picture = UploadedFile::fake()->image('pic.png');
+        $renter = Renter::factory()->create();
+        $this->seed(WilayaCommuneSeeder::class);
+        $data = [
+            'title' => 'prop 1',
+            'state' => 'Alger',
+            'city' => 'Alger Centre',
+            'street' => 'stade 20 aout',
+            'price' => 5000,
+            'type' => 'house',
+            'bedrooms' => 3,
+            'beds' => 3,
+            'description' => 'some text for description',
+            'rooms' => 3,
+            'images' => [
+                'image_1' => $picture,
+            ]
+        ];
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+
+        $response->assertStatus(403)->assertJsonValidationErrors('bathrooms');
+        $this->assertDatabaseCount('properties',0);
+    }
+    /** @test */
+    public function a_property_beds_required() {
+        $this->withoutExceptionHandling();
+        Storage::fake('property');
+        $picture = UploadedFile::fake()->image('pic.png');
+        $renter = Renter::factory()->create();
+        $this->seed(WilayaCommuneSeeder::class);
+        $data = [
+            'title' => 'prop 1',
+            'state' => 'Alger',
+            'city' => 'Alger Centre',
+            'street' => 'stade 20 aout',
+            'price' => 5000,
+            'type' => 'house',
+            'bedrooms' => 3,
+            'bathrooms' => 3,
+            'description' => 'some text for description',
+            'rooms' => 3,
+            'images' => [
+                'image_1' => $picture,
+            ]
+        ];
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+
+        $response->assertStatus(403)->assertJsonValidationErrors('beds');
+        $this->assertDatabaseCount('properties',0);
     }
 }

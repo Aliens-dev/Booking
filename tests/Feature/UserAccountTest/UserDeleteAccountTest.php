@@ -4,7 +4,8 @@
 namespace Tests\Feature\UserAccountTest;
 
 
-use App\Models\User;
+use App\Models\Renter;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,7 +18,7 @@ class UserDeleteAccountTest extends TestCase {
     {
         $this->withoutExceptionHandling();
 
-        $user = User::factory()->create();
+        $user = Renter::factory()->create();
         $response = $this->actingAs($user)->json('DELETE', '/users/'. $user->id);
         $response->assertStatus(200);
         $this->assertDatabaseCount('users',0);
@@ -30,8 +31,8 @@ class UserDeleteAccountTest extends TestCase {
     {
         $this->withoutExceptionHandling();
 
-        $user = User::factory()->create();
-        $user2 = User::factory()->create();
+        $user = Renter::factory()->create();
+        $user2 = Renter::factory()->create();
 
         $response = $this->actingAs($user)->json('DELETE', '/users/'. $user2->id);
         $response->assertStatus(403);
@@ -43,11 +44,9 @@ class UserDeleteAccountTest extends TestCase {
 
     public function an_unauthenticated_user_cannot_delete_others_account()
     {
-        $this->withoutExceptionHandling();
-        $user = User::factory()->create();
-
+        $user = Renter::factory()->create();
         $response = $this->json('DELETE', '/users/'. $user->id);
-        $response->assertStatus(403);
+        $response->assertStatus(401);
         $this->assertDatabaseCount('users',1);
         $this->assertDatabaseHas('users', ['id' => $user->id]);
     }

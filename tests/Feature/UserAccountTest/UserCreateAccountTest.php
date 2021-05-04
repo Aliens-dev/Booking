@@ -4,27 +4,18 @@
 namespace Tests\Feature\UserAccountTest;
 
 
+use App\Models\Renter;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class UserCreateAccountTest extends TestCase
 {
     use DatabaseMigrations;
-
-    public function test_a_client_can_create_account()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = $this->userCollection();
-        $response = $this->postJson('/users', $user->toArray());
-
-        $response->assertStatus(201)
-            ->assertJson(['success'=> true]);
-
-        $this->assertDatabaseCount('users', 1);
-    }
 
     public function test_user_fname_required() {
         $this->withoutExceptionHandling();
@@ -88,9 +79,7 @@ class UserCreateAccountTest extends TestCase
         $response->assertJson(['success' => true]);
         $this->assertDatabaseCount('users',1);
         $user['password'] = bcrypt($user['password']);
-        $this->assertDatabaseHas('users', [
-
-        ]);
+        $this->assertDatabaseHas('users', []);
     }
 
     public function test_user_phone_number_required() {
@@ -220,54 +209,13 @@ class UserCreateAccountTest extends TestCase
         $this->assertDatabaseCount('users',0);
     }
 
-    public function test_user_role_required() {
-        $this->withoutExceptionHandling();
-        $user = $this->userCollection()->except('user_role')->toArray();
-        $response = $this->postJson('/users', $user);
-        $response->assertStatus(403);
-        $response->assertJsonValidationErrors('user_role');
-        $this->assertDatabaseCount('users',0);
-    }
-
-    public function test_user_role_added_to_user_roles_table() {
-        $this->withoutExceptionHandling();
-        $user = $this->userCollection()->toArray();
-        $response = $this->postJson('/users', $user);
-        $response->assertStatus(201);
-        $this->assertDatabaseCount('users',1);
-    }
     /** @test */
-    public function user_role_exists_client_role() {
-        $this->withoutExceptionHandling();
-        $user = $this->userCollection()->toArray();
+    public function a_verification_email_is_sent_when_registering() {
 
-        $user['user_role'] = 'not_exist';
-
-        $response = $this->postJson('/users', $user);
-        $response->assertStatus(403);
-        $response->assertJsonValidationErrors('user_role');
-        $this->assertDatabaseCount('users',0);
-    }
-    /** @test */
-    public function user_is_assigned_client_role() {
-        $this->withoutExceptionHandling();
-        $user = $this->userCollection()->toArray();
-        $response = $this->postJson('/users', $user);
-        $response->assertStatus(201);
-        $this->assertDatabaseCount('users',1);
-        $user = User::FindOrFail(1)->first();
-        $this->assertEquals('client',$user->user_role);
-    }
-    /** @test */
-    public function user_is_assigned_renter_role() {
-        $this->withoutExceptionHandling();
-        $user = $this->userCollection()->toArray();
-        $user['user_role'] = 'renter';
-        $response = $this->postJson('/users', $user);
-        $response->assertStatus(201);
-        $this->assertDatabaseCount('users',1);
-        $user = User::FindOrFail(1)->first();
-        $this->assertEquals('renter',$user->user_role);
+        $data = $this->userCollection()->toArray();
+        $this->json('post','/users',$data);
+        $user = User::find(1);
+        $this->assertFalse($user->hasVerifiedEmail());
     }
 
     private function userCollection() {
@@ -280,7 +228,7 @@ class UserCreateAccountTest extends TestCase
             'phone_number' => '0565469531',
             'dob' => '25-06-2000',
             'company' => 'aliensdev',
-            'user_role' => 'client'
+            'user_role' => 'renter',
         ]);
     }
 }

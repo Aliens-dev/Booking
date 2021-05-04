@@ -2,18 +2,18 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Models\Client;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-class UserFactory extends Factory
+class ClientFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = User::class;
+    protected $model = Client::class;
 
     /**
      * Define the model's default state.
@@ -27,9 +27,9 @@ class UserFactory extends Factory
             'lname' => $this->faker->name,
             'phone_number' => '0665469531',
             'dob' => '05-05-2000',
-            'user_role' => 'client',
             'email' => $this->faker->unique()->safeEmail,
             'email_verified_at' => now(),
+            'user_role' => 'client',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
         ];
@@ -38,7 +38,7 @@ class UserFactory extends Factory
     /**
      * Indicate that the model's email address should be unverified.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function unverified()
     {

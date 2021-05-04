@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'user_api',
-        'passwords' => 'clients',
+        'guard' => 'users',
+        'passwords' => 'users',
     ],
 
     /*
@@ -36,21 +36,20 @@ return [
     */
 
     'guards' => [
-        'user_api' => [
-            'driver' => 'token',
+        'users' => [
+            'driver' => 'sanctum',
             'provider' => 'users',
             'hash' => false,
         ],
-        'admin_api' => [
-            'driver' => 'token',
-            'provider' => 'admins',
-            'hash' => false,
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
         ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | User Providers
+    | Users Providers
     |--------------------------------------------------------------------------
     |
     | All authentication drivers have a user provider. This defines how the
@@ -69,10 +68,6 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
-        ],
-        'admins' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Admin::class,
         ],
 
         // 'users' => [
@@ -99,12 +94,6 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-        'admins' => [
-            'provider' => 'admins',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

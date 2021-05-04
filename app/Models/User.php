@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasFactory;
+    use Notifiable, HasFactory, HasApiTokens;
 
+    protected $table = 'users';
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -29,17 +32,6 @@ class User extends Authenticatable
     ];
 
     protected $guarded = ['created_at', 'updated_at'];
+    protected $fillable = ['fname', 'lname', 'email', 'password', 'dob', 'phone_number','user_role'];
 
-
-    public function scopeClient($query) {
-        return $query->where('user_role', 'client');
-    }
-
-    public function scopeRenter($query) {
-        return $query->where('user_role', 'renter');
-    }
-
-    public function properties() {
-        return $this->hasMany(Property::class,'user_id');
-    }
 }

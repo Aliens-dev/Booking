@@ -6,25 +6,36 @@ namespace App\Services;
 
 class PriceService
 {
-    private $price;
+    private $pricePerDay;
 
-    public function __construct($price = 0)
+    public function __construct($days, $pricePerDay)
     {
-        $this->price = $price;
+        $this->pricePerDay = $pricePerDay;
+        $this->days = $days;
     }
 
-    public function getFee()
+    public function getDayFee()
     {
-        if($this->price === 0) {
+        if($this->pricePerDay === 0) {
             return 0;
         }
-        if($this->price > 5000) {
-            return ($this->price * 10) / 100;
+        if($this->pricePerDay > 5000) {
+            return ($this->pricePerDay * 10) / 100;
         }
         return 500;
     }
 
-    public function getTotal() {
-        return $this->price + $this->getFee();
+    public function getTotalFee()
+    {
+        return $this->getDayFee() * $this->days;
+    }
+
+    public function getTotalPrice()
+    {
+        return ($this->pricePerDay * $this->days) + $this->getTotalFee();
+    }
+
+    public static function calculateFee($days, $price) {
+        
     }
 }

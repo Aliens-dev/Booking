@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Renter;
 use Illuminate\Database\Seeder;
 use DB;
 use Schema;
@@ -30,7 +30,7 @@ class WilayaCommuneSeeder extends Seeder
             $this->command->info("Success!! wilayas and communes are loaded successfully");
             return;
         }
-        
+
         $this->command->comment("Wilayas/Communes already loaded");
     }
 

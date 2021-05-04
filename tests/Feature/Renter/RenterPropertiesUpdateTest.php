@@ -5,9 +5,10 @@ namespace Renter;
 
 
 use App\Models\Property;
-use App\Models\User;
+use App\Models\Renter;
 use Database\Seeders\WilayaCommuneSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class RenterPropertiesUpdateTest extends TestCase
@@ -18,8 +19,7 @@ class RenterPropertiesUpdateTest extends TestCase
     public function a_renter_can_update_property_title()
     {
         $this->withoutExceptionHandling();
-
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->title = 'welcome';
@@ -36,7 +36,7 @@ class RenterPropertiesUpdateTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->seed(WilayaCommuneSeeder::class);
         $title = $property->title;
@@ -53,7 +53,7 @@ class RenterPropertiesUpdateTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->seed(WilayaCommuneSeeder::class);
         $property->state = 'Oran';
@@ -69,7 +69,7 @@ class RenterPropertiesUpdateTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->seed(WilayaCommuneSeeder::class);
         $state = $property->state;
@@ -88,7 +88,7 @@ class RenterPropertiesUpdateTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->seed(WilayaCommuneSeeder::class);
         $property->city = 'Baraki';
@@ -104,7 +104,7 @@ class RenterPropertiesUpdateTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->seed(WilayaCommuneSeeder::class);
         $city = $property->city;
@@ -123,7 +123,7 @@ class RenterPropertiesUpdateTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->seed(WilayaCommuneSeeder::class);
         $property->street = 'some street';
@@ -139,7 +139,7 @@ class RenterPropertiesUpdateTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $renter = User::factory()->create(['user_role' => 'renter']);
+        $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->seed(WilayaCommuneSeeder::class);
         $street = $property->street;
@@ -151,5 +151,206 @@ class RenterPropertiesUpdateTest extends TestCase
 
         $this->assertDatabaseCount('properties',1);
         $this->assertDatabaseHas('properties', ['street' => $street]);
+    }
+
+    /** @test */
+    public function a_renter_can_update_property_price()
+    {
+        $this->withoutExceptionHandling();
+
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $this->seed(WilayaCommuneSeeder::class);
+        $property->price = 4000;
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(200);
+
+        $this->assertDatabaseCount('properties',1);
+        $this->assertDatabaseHas('properties', ['price' => 4000]);
+    }
+    /** @test */
+    public function a_renter_property_price_is_required()
+    {
+        $this->withoutExceptionHandling();
+
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $this->seed(WilayaCommuneSeeder::class);
+        $price = $property->price;
+        $property->price = '';
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(403)
+            ->assertJsonValidationErrors('price');
+
+        $this->assertDatabaseCount('properties',1);
+        $this->assertDatabaseHas('properties', ['price' => $price]);
+    }
+    /** @test */
+    public function a_renter_property_price_cannot_be_less_than_200()
+    {
+        $this->withoutExceptionHandling();
+
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $this->seed(WilayaCommuneSeeder::class);
+        $price = $property->price;
+        $property->price = 150;
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(403)
+            ->assertJsonValidationErrors('price');
+
+        $this->assertDatabaseCount('properties',1);
+        $this->assertDatabaseHas('properties', ['price' => $price]);
+    }
+
+    #Renter Cannot change the property Type !!
+
+    /** @test */
+    public function a_renter_property_type_cannot_be_updated()
+    {
+        $this->withoutExceptionHandling();
+
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $this->seed(WilayaCommuneSeeder::class);
+        $type = $property->type;
+        $property->type = 'house';
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(403);
+
+        $this->assertDatabaseCount('properties',1);
+        $this->assertDatabaseHas('properties', ['type' => $type]);
+    }
+
+    /** @test */
+    public function a_renter_property_rooms_can_be_updated()
+    {
+        $this->withoutExceptionHandling();
+
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $this->seed(WilayaCommuneSeeder::class);
+        $rooms = $property->rooms + 1;
+        $property->rooms = $property->rooms + 1;
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(200);
+
+        $this->assertDatabaseCount('properties',1);
+        $this->assertDatabaseHas('properties', ['rooms' => $rooms]);
+    }
+
+    /** @test */
+    public function a_renter_property_description_cannot_be_empty()
+    {
+
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $this->seed(WilayaCommuneSeeder::class);
+        $desc = $property->description;
+        $property->description = '';
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(403);
+
+        $this->assertDatabaseCount('properties',1);
+        $this->assertDatabaseHas('properties', ['description' => $desc]);
+    }
+    /** @test */
+    public function if_pics_are_not_changed_the_you_can_update_and_keep_old_pics()
+    {
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $property->images()->create(['url' => '1.jpg']);
+        $property->images()->create(['url' => '2.jpg']);
+        $this->seed(WilayaCommuneSeeder::class);
+        $data = [
+            'title' => 'prop 1',
+            'state' => 'Alger',
+            'city' => 'Alger Centre',
+            'street' => 'lorem ipsum',
+            'price' => 5000,
+            'type' => $property->type,
+            'bedrooms' => 4,
+            'bathrooms' => 4,
+            'beds' => 4,
+            'description' => 'some text for description',
+            'rooms' => 3,
+        ];
+        $this->actingAs($renter)->json('patch','/properties/'. $property->id, $data)
+            ->assertStatus(200);
+        $this->assertDatabaseCount('properties',1);
+        $this->assertDatabaseCount('images', 2);
+        $this->assertDatabaseHas('properties', $data);
+    }
+    /** @test */
+    public function if_pics_are_updated_if_exist_in_request()
+    {
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $property->images()->create(['url' => '1.jpg']);
+        $property->images()->create(['url' => '2.jpg']);
+        $this->seed(WilayaCommuneSeeder::class);
+        $pictures = [
+            '0' => UploadedFile::fake()->image('pic1.png'),
+            '1' => UploadedFile::fake()->image('pic2.png'),
+            '2' => UploadedFile::fake()->image('pic3.png'),
+            '3' => UploadedFile::fake()->image('pic4.png'),
+        ];
+        $property->images = $pictures;
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(200);
+        $this->assertDatabaseCount('properties',1);
+        $this->assertDatabaseCount('images', 4);
+    }
+    /** @test */
+    public function a_renter_property_bedrooms_required()
+    {
+        $this->withoutExceptionHandling();
+
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $this->seed(WilayaCommuneSeeder::class);
+        $bedrooms = $property->bedrooms;
+        $property->bedrooms = '';
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(403);
+        $this->assertDatabaseHas('properties',['bedrooms' => $bedrooms]);
+    }
+    /** @test */
+    public function a_renter_property_bathrooms_required()
+    {
+        $this->withoutExceptionHandling();
+
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $this->seed(WilayaCommuneSeeder::class);
+        $bathrooms = $property->bathrooms;
+        $property->bathrooms = '';
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(403);
+        $this->assertDatabaseHas('properties',['bathrooms' => $bathrooms]);
+    }
+    /** @test */
+    public function a_renter_property_beds_required()
+    {
+        $this->withoutExceptionHandling();
+
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $this->seed(WilayaCommuneSeeder::class);
+        $beds = $property->beds;
+        $property->beds = '';
+        $property = $property->toArray();
+        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+            ->assertStatus(403);
+        $this->assertDatabaseHas('properties',['beds' => $beds]);
     }
 }

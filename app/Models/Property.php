@@ -9,13 +9,17 @@ class Property extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title','state','city','street','description', 'price', 'type', 'rooms','video'];
+    protected $fillable = ['title','state','city','street','description', 'price', 'type', 'rooms','bedrooms','bathrooms','beds','video'];
 
     public function images() {
         return $this->morphMany(Image::class,'imageable');
     }
 
     public function renter(){
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(Renter::class,'user_id');
+    }
+
+    public function client() {
+        return $this->belongsToMany(Client::class,'client_properties');
     }
 }

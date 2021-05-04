@@ -21,12 +21,15 @@ class CreatePropertiesTable extends Migration
             $table->string('street');
             $table->string('description');
             $table->double('price');
+            $table->integer('bedrooms');
+            $table->integer('bathrooms');
+            $table->integer('beds');
             $table->string('type');
             $table->integer('rooms');
+            $table->string('status')->default('available');
             $table->string('video')->default('');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
-
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
