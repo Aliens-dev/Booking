@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Properties;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
+use App\Models\PropertyType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -27,7 +28,7 @@ class PropertiesController extends Controller
             'city' => ['required', Rule::in(communes())],
             'street' => 'required|min:3|max:255',
             'price' => 'required|integer|min:200',
-            'type' => 'required',
+            'type' => 'required|exists:property_types',
             'rooms' => 'required|min:1|integer',
             'bedrooms' => 'required|min:1|integer',
             'bathrooms' => 'required|min:1|integer',
@@ -49,7 +50,10 @@ class PropertiesController extends Controller
         if(! $commune) {
             return response()->json(['success' => false, 'errors' => "Commune Name doesn't correspond to any Wilaya"],403);
         }
-        $property = auth()->user()->properties()->create($validate->validated());
+        $property_type = PropertyType::where('type', $request->type)->first();
+        $data = collect($validate->validated())->except('images')->put('type_id',$property_type->id)->toArray();
+
+        $property = auth()->user()->properties()->create($data);
 
         if($request->hasFile('images')) {
             $images = $request->file('images');
@@ -68,7 +72,7 @@ class PropertiesController extends Controller
             'city' => ['required', Rule::in(communes())],
             'street' => 'required|min:3|max:255',
             'price' => 'required|integer|min:200',
-            'type' => 'required',
+            'type' => 'required|exists:property_types',
             'rooms' => 'required|min:1|integer',
             'bedrooms' => 'required|min:1|integer',
             'bathrooms' => 'required|min:1|integer',
@@ -77,17 +81,15 @@ class PropertiesController extends Controller
             'images.*' => 'sometimes|image|mimes:jpg,bmp,png',
             'description' => 'sometimes|required|max:500',
         ];
-
         $validate = Validator::make($request->all(), $rules);
         if($validate->fails()) {
             return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
         }
 
-        if($request->type !== $property->type) {
-            return response()->json(['success' => false ], 403);
-        }
+        $property_type = PropertyType::where('type', $request->type)->first();
+        $data = collect($validate->validated())->except('images','type')->put('type_id',$property_type->id)->toArray();
 
-        auth()->user()->properties()->update(collect($validate->validated())->except('images')->toArray());
+        auth()->user()->properties()->update($data);
 
         if($request->hasFile('images')) {
             $property->images()->delete();

@@ -5,6 +5,7 @@ namespace Renter;
 
 
 use App\Models\Property;
+use App\Models\PropertyType;
 use App\Models\Renter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,6 +20,7 @@ class RenterPropertyDeleteTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $renter=  Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->actingAs($renter)->json('delete', '/properties/' . $property->id)
             ->assertStatus(200)
@@ -32,6 +34,7 @@ class RenterPropertyDeleteTest extends TestCase
         $this->withoutExceptionHandling();
         $renter=  Renter::factory()->create();
         $renter2=  Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->actingAs($renter2)->json('delete', '/properties/' . $property->id)
             ->assertStatus(401)
@@ -44,6 +47,7 @@ class RenterPropertyDeleteTest extends TestCase
     public function an_anauthorized_user_cannot_delete_property()
     {
         $renter=  Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $this->json('delete', '/properties/' . $property->id)
             ->assertStatus(401);

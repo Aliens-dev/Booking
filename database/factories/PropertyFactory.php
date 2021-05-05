@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Property;
+use App\Models\PropertyType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PropertyFactory extends Factory
@@ -28,10 +29,10 @@ class PropertyFactory extends Factory
             'street' => $this->faker->streetAddress,
             'description' => $this->faker->text(150),
             'price' => rand(250,10000),
+            'type_id' => 1,
             'bedrooms' => rand(1,10),
             'bathrooms' => rand(1,10),
             'beds' => rand(1,10),
-            'type' => 'House',
             'rooms' => rand(1,5),
         ];
     }

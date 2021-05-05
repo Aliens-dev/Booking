@@ -9,7 +9,7 @@ class Property extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title','state','city','street','description', 'price', 'type', 'rooms','bedrooms','bathrooms','beds','video'];
+    protected $fillable = ['title','state','city','street','description', 'price','type_id', 'rooms','bedrooms','bathrooms','beds','video'];
 
     public function images() {
         return $this->morphMany(Image::class,'imageable');
@@ -21,5 +21,9 @@ class Property extends Model
 
     public function client() {
         return $this->belongsToMany(Client::class,'client_properties');
+    }
+
+    public function ratings() {
+        return $this->hasMany(Rating::class, 'property_id');
     }
 }

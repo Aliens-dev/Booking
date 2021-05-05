@@ -5,6 +5,7 @@ namespace Renter;
 
 
 use App\Models\Client;
+use App\Models\PropertyType;
 use App\Models\Renter;
 use Database\Seeders\WilayaCommuneSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,6 +21,7 @@ class RenterPropertiesTest extends TestCase
     public function a_renter_can_add_new_property() {
         $this->withoutExceptionHandling();
         Storage::fake('property');
+        $types = PropertyType::factory()->count(5)->create();
         $picture = UploadedFile::fake()->image('pic.png');
         $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);
@@ -44,7 +46,7 @@ class RenterPropertiesTest extends TestCase
         $response->assertStatus(201);
         $this->assertDatabaseCount('properties',1);
         $data = collect($data);
-        $this->assertDatabaseHas('properties', $data->except('images')->toArray());
+        $this->assertDatabaseHas('properties', $data->except('images','type')->toArray());
     }
 
     /** @test */
@@ -445,6 +447,7 @@ class RenterPropertiesTest extends TestCase
 
         $this->withoutExceptionHandling();
         Storage::fake('property');
+        PropertyType::factory()->create();
         $picture = UploadedFile::fake()->image('pic.png');
         $renter = Renter::factory()->create();
         $this->seed(WilayaCommuneSeeder::class);

@@ -5,6 +5,7 @@ namespace Renter;
 
 
 use App\Models\Property;
+use App\Models\PropertyType;
 use App\Models\Renter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -21,6 +22,7 @@ class RenterPropertyImagesTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake('property');
         $renter = Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
@@ -38,6 +40,7 @@ class RenterPropertyImagesTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake('property');
         $renter = Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
@@ -53,6 +56,7 @@ class RenterPropertyImagesTest extends TestCase
         $this->withoutExceptionHandling();
         Storage::fake('property');
         $renter = Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
@@ -70,6 +74,7 @@ class RenterPropertyImagesTest extends TestCase
         Storage::fake('property');
         $renter = Renter::factory()->create();
         $renter2 = Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
@@ -88,6 +93,7 @@ class RenterPropertyImagesTest extends TestCase
         Storage::fake('property');
         $renter = Renter::factory()->create();
         $renter2 = Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
@@ -104,6 +110,7 @@ class RenterPropertyImagesTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $renter = Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
@@ -117,6 +124,7 @@ class RenterPropertyImagesTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $renter = Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
@@ -131,6 +139,7 @@ class RenterPropertyImagesTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $renter = Renter::factory()->create();
+        PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property2 = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);

@@ -24,13 +24,14 @@ class CreatePropertiesTable extends Migration
             $table->integer('bedrooms');
             $table->integer('bathrooms');
             $table->integer('beds');
-            $table->string('type');
+            $table->unsignedBigInteger('type_id');
             $table->integer('rooms');
             $table->string('status')->default('available');
             $table->string('video')->default('');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('type_id')->references('id')->on('property_types')->cascadeOnDelete();
         });
     }
 

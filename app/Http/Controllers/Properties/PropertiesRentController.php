@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Properties;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
+use App\Models\Reservation;
 use App\Models\Property;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +18,9 @@ class PropertiesRentController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth:users', 'client.auth']);
+        $this->middleware(['auth:users'])->only('destroy');
+        $this->middleware(['auth:users','client.auth'])->only('store');
+        $this->middleware(['auth:users','renter.auth'])->only('update');
     }
 
     /**
@@ -43,31 +47,27 @@ class PropertiesRentController extends Controller
             'start_time' => $start_time,
             'end_time' => $end_time
         ]);
-
-        return response()->json(['success'=> true], 200);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
+        $property->status = 'pending';
+        $property->save();
+        return response()->json(['success'=> true], 201);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param  int  $id
-     * @return Response
+     * @param Property $property
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Property $property)
     {
-        //
+        $inspect = Gate::inspect('update', $property);
+        if($inspect->denied()) {
+            return response()->json(['success' => false ], 401);
+        }
+        $property->status = 'approved';
+        $property->save();
+        return response()->json(['success'=> true], 200);
     }
 
     /**
@@ -82,7 +82,13 @@ class PropertiesRentController extends Controller
         if($inspect->denied()) {
             return response()->json(['success' => false ], 401);
         }
-        auth()->user()->properties()->detach($property->id);
+        if(auth()->user() instanceof Client) {
+            auth()->user()->properties()->detach($property->id);
+        }else {
+            Reservation::where('property_id', $property->id)->delete();
+        }
+        $property->status = 'available';
+        $property->save();
         return response()->json(['success'=> true], 200);
     }
 }

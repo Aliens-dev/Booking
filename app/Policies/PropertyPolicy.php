@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Client;
 use App\Models\Property;
 use App\Models\Renter;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PropertyPolicy
@@ -72,13 +73,13 @@ class PropertyPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param Client $client
+     * @param User $user
      * @param Property $property
      * @return mixed
      */
-    public function cancelRent(Client $client, Property $property)
+    public function cancelRent(User $user, Property $property)
     {
-        return  $client->properties->contains($property);
+        return  $user->properties->contains($property) || (int)$property->user_id === $user->id;
     }
 
 

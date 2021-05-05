@@ -18,6 +18,6 @@ class Client extends User
     }
 
     public function properties() {
-        return $this->belongsToMany(Property::class, 'client_properties');
+        return $this->belongsToMany(Property::class, 'reservations');
     }
 }
