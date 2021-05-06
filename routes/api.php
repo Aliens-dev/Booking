@@ -26,17 +26,17 @@ Route::group(['prefix' => 'users'], function() {
 Route::group(['prefix' => 'properties'], function() {
     Route::get('/', [PropertiesController::class, 'index']);
     Route::post('/', [PropertiesController::class, 'store']);
-
+    /* images */
     Route::delete('/{property}/images/{image}', [PropertyImagesController::class, 'destroySingle']);
     Route::get('/{property}/images', [PropertyImagesController::class, 'index']);
     Route::post('/{property}/images', [PropertyImagesController::class, 'store']);
     Route::patch('/{property}/images', [PropertyImagesController::class, 'update']);
     Route::delete('/{property}/images', [PropertyImagesController::class, 'destroy']);
-
+    /* renting */
     Route::post('/{property}/rent', [PropertiesRentController::class, 'store']);
     Route::patch('/{property}/rent', [PropertiesRentController::class, 'update']);
     Route::delete('/{property}/rent', [PropertiesRentController::class, 'destroy']);
-
+    /* rating */
     Route::post('/{property}/rating', [PropertiesRatingController::class, 'store']);
     Route::delete('/{property}/rating/{rating}', [PropertiesRatingController::class, 'destroy']);
 

@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Rule extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name'];
+
+
+
+    public function properties()
+    {
+        return $this->belongsToMany(Property::class,'property_rules');
+    }
 }

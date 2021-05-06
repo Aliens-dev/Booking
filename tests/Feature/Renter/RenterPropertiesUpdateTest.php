@@ -259,6 +259,7 @@ class RenterPropertiesUpdateTest extends TestCase
     /** @test */
     public function if_pics_are_not_changed_the_you_can_update_and_keep_old_pics()
     {
+        $this->withoutExceptionHandling();
         $renter = Renter::factory()->create();
         PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);

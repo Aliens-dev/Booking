@@ -26,4 +26,9 @@ class Property extends Model
     public function ratings() {
         return $this->hasMany(Rating::class, 'property_id');
     }
+
+    public function rules()
+    {
+        return $this->belongsToMany(Rule::class,'property_rules');
+    }
 }
