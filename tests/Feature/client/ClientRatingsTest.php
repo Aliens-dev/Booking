@@ -81,4 +81,33 @@ class ClientRatingsTest extends TestCase
             ->assertStatus(200);
         $this->assertDatabaseCount('ratings',0);
     }
+
+    /** @test */
+    public function a_renter_cannot_add_rating()
+    {
+        PropertyType::factory()->create();
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $data = [
+            'rating' => 2
+        ];
+        $client = Client::factory()->create();
+        $this->actingAs($renter)->json('post','/properties/'. $property->id . '/rating/', $data)
+            ->assertStatus(401);
+        $this->assertDatabaseCount('ratings',0);
+    }
+    /** @test */
+
+    public function a_visitor_cannot_add_rating()
+    {
+        PropertyType::factory()->create();
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id]);
+        $data = [
+            'rating' => 2
+        ];
+        $this->json('post','/properties/'. $property->id . '/rating/', $data)
+            ->assertStatus(401);
+        $this->assertDatabaseCount('ratings',0);
+    }
 }

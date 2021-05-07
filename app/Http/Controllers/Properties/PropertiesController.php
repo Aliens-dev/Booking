@@ -38,7 +38,7 @@ class PropertiesController extends Controller
         }
 
         $property_type = PropertyType::where('type', $request->type)->first();
-        $data = collect($validate->validated())->except('images','rules')->put('type_id',$property_type->id)->toArray();
+        $data = collect($validate->validated())->put('type_id',$property_type->id)->toArray();
         $property = auth()->user()->properties()->create($data);
 
         $this->updatePivot($request,$property,Rule::class, 'rules');
@@ -62,9 +62,9 @@ class PropertiesController extends Controller
             return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
         }
         $property_type = PropertyType::where('type', $request->type)->first();
-        $data = collect($validate->validated())->except('images','type')->put('type_id',$property_type->id)->toArray();
+        $data = collect($validate->validated())->put('type_id',$property_type->id)->toArray();
 
-        auth()->user()->properties()->update($data);
+        $property->fill($data)->save();
 
         if($request->hasFile('images')) {
             $property->images()->delete();

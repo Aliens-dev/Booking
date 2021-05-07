@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Validator;
 
 class PropertiesRatingController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth:users','client.auth']);
+    }
 
     /**
      * @param Request $request

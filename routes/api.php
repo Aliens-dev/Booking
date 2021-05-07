@@ -8,11 +8,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 */
 
+use App\Http\Controllers\Amenities\AmenitiesController;
+use App\Http\Controllers\Facilities\FacilitiesController;
 use App\Http\Controllers\Properties\PropertiesController;
 use App\Http\Controllers\Properties\PropertiesRatingController;
 use App\Http\Controllers\Properties\PropertiesRentController;
 use App\Http\Controllers\Properties\PropertyImagesController;
+use App\Http\Controllers\Rules\RulesController;
 use App\Http\Controllers\Users\UserAccountController;
+use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix' => 'users'], function() {
@@ -21,6 +25,25 @@ Route::group(['prefix' => 'users'], function() {
     Route::post('email/resend', 'VerificationController@resend')->name('verification.resend');
     Route::patch('/{user}', [UserAccountController::class, 'update']);
     Route::delete('/{user}', [UserAccountController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'rules'], function() {
+    Route::get('/',[RulesController::class,'index']);
+    Route::post('/',[RulesController::class,'store']);
+    Route::patch('/{rule}',[RulesController::class,'update']);
+    Route::delete('/{rule}',[RulesController::class,'destroy']);
+});
+Route::group(['prefix' => 'facilities'], function() {
+    Route::get('/',[FacilitiesController::class,'index']);
+    Route::post('/',[FacilitiesController::class,'store']);
+    Route::patch('/{facility}',[FacilitiesController::class,'update']);
+    Route::delete('/{facility}',[FacilitiesController::class,'destroy']);
+});
+Route::group(['prefix' => 'amenities'], function() {
+    Route::get('/',[AmenitiesController::class,'index']);
+    Route::post('/',[AmenitiesController::class,'store']);
+    Route::patch('/{amenity}',[AmenitiesController::class,'update']);
+    Route::delete('/{amenity}',[AmenitiesController::class,'destroy']);
 });
 
 Route::group(['prefix' => 'properties'], function() {

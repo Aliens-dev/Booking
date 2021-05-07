@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\ClientMiddleware;
 use App\Http\Middleware\JWTMiddleware;
 use App\Http\Middleware\RenterMiddleware;
@@ -67,5 +68,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'renter.auth' => RenterMiddleware::class,
         'client.auth' => ClientMiddleware::class,
+        'admin.auth' => AdminMiddleware::class,
     ];
 }
