@@ -15,9 +15,12 @@ class CreateAmenityPropertiesTable extends Migration
     {
         Schema::create('amenity_properties', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('facility_id');
+            $table->unsignedBigInteger('amenity_id');
             $table->unsignedBigInteger('property_id');
             $table->timestamps();
+
+            $table->foreign('amenity_id')->references('id')->on('amenities')->cascadeOnDelete();
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
         });
     }
 

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Properties;
 
 use App\Http\Controllers\Controller;
+use App\Models\Amenity;
+use App\Models\Facility;
 use App\Models\Property;
 use App\Models\PropertyType;
 use App\Models\Rule;
@@ -23,25 +25,8 @@ class PropertiesController extends Controller
 
     public function store(Request $request)
     {
-        $rules = [
-            'title' => 'required|min:3|max:100',
-            'state' => ['required', VALRule::in(wilayas())],
-            'city' => ['required', VALRule::in(communes())],
-            'street' => 'required|min:3|max:255',
-            'price' => 'required|integer|min:200',
-            'type' => 'required|exists:property_types',
-            'rooms' => 'required|min:1|integer',
-            'bedrooms' => 'required|min:1|integer',
-            'bathrooms' => 'required|min:1|integer',
-            'beds' => 'required|min:1|integer',
-            'images' => 'required|max:10',
-            'images.*' => 'image|mimes:jpg,bmp,png',
-            'rules' => 'sometimes|required',
-            'rules.*' => 'exists:rules,name',
-            'description' => 'sometimes|required|max:500',
-        ];
 
-        $validate = Validator::make($request->all(), $rules);
+        $validate = Validator::make($request->all(), $this->rules());
         if($validate->fails()) {
             return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
         }
@@ -56,12 +41,9 @@ class PropertiesController extends Controller
         $data = collect($validate->validated())->except('images','rules')->put('type_id',$property_type->id)->toArray();
         $property = auth()->user()->properties()->create($data);
 
-        if($request->has('rules')) {
-            foreach ($request->rules as $rule) {
-                $rule = Rule::where('name',$rule)->first();
-                $property->rules()->attach($rule->id);
-            }
-        }
+        $this->updatePivot($request,$property,Rule::class, 'rules');
+        $this->updatePivot($request,$property, Facility::class,'facilities');
+        $this->updatePivot($request,$property,Amenity::class,'amenities');
 
         if($request->hasFile('images')) {
             $images = $request->file('images');
@@ -73,25 +55,9 @@ class PropertiesController extends Controller
         return response()->json(['success'=> true],201);
     }
 
-    public function update(Request $request, Property $property) {
-        $rules = [
-            'title' => 'required|min:3|max:100',
-            'state' => ['required', VALRule::in(wilayas())],
-            'city' => ['required', VALRule::in(communes())],
-            'street' => 'required|min:3|max:255',
-            'price' => 'required|integer|min:200',
-            'type' => 'required|exists:property_types',
-            'rooms' => 'required|min:1|integer',
-            'bedrooms' => 'required|min:1|integer',
-            'bathrooms' => 'required|min:1|integer',
-            'beds' => 'required|min:1|integer',
-            'images' => 'sometimes|required|max:10',
-            'images.*' => 'sometimes|image|mimes:jpg,bmp,png',
-            'rules' => 'sometimes|required',
-            'rules.*' => 'exists:rules,name',
-            'description' => 'sometimes|required|max:500',
-        ];
-        $validate = Validator::make($request->all(), $rules);
+    public function update(Request $request, Property $property)
+    {
+        $validate = Validator::make($request->all(), $this->rules());
         if($validate->fails()) {
             return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
         }
@@ -109,13 +75,9 @@ class PropertiesController extends Controller
             }
         }
 
-        if($request->has('rules')) {
-            foreach ($request->rules as $rule) {
-                $rule = Rule::where('name',$rule)->first();
-                $property->rules()->attach($rule->id);
-            }
-        }
-
+        $this->updatePivot($request,$property,Rule::class, 'rules');
+        $this->updatePivot($request,$property, Facility::class,'facilities');
+        $this->updatePivot($request,$property,Amenity::class,'amenities');
 
         return response()->json(['success' => true], 200);
     }
@@ -128,5 +90,40 @@ class PropertiesController extends Controller
         }
         $property->delete();
         return response()->json(['success' => true], 200);
+    }
+
+    public function rules()
+    {
+        return [
+            'title' => 'required|min:3|max:100',
+            'state' => ['required', VALRule::in(wilayas())],
+            'city' => ['required', VALRule::in(communes())],
+            'street' => 'required|min:3|max:255',
+            'price' => 'required|integer|min:200',
+            'type' => 'required|exists:property_types',
+            'rooms' => 'required|min:1|integer',
+            'bedrooms' => 'required|min:1|integer',
+            'bathrooms' => 'required|min:1|integer',
+            'beds' => 'required|min:1|integer',
+            'images' => 'sometimes|required|max:10',
+            'images.*' => 'image|mimes:jpg,bmp,png',
+            'rules' => 'sometimes|required',
+            'rules.*' => 'exists:rules,name',
+            'facilities' => 'sometimes|required',
+            'facilities.*' => 'exists:facilities,name',
+            'amenities' => 'sometimes|required',
+            'amenities.*' => 'exists:amenities,name',
+            'description' => 'sometimes|required|max:500',
+        ];
+    }
+
+    private function updatePivot(Request $request, Property $property, $model,$key) {
+        if($request->has($key)) {
+            $property->{$key}()->delete();
+            foreach ($request->{$key} as $k) {
+                $newK = $model::where('name',$k)->first();
+                $property->{$key}()->attach($newK->id);
+            }
+        }
     }
 }

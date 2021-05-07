@@ -18,6 +18,10 @@ class CreateFacilityPropertiesTable extends Migration
             $table->unsignedBigInteger('facility_id');
             $table->unsignedBigInteger('property_id');
             $table->timestamps();
+
+            $table->foreign('facility_id')->references('id')->on('facilities')->cascadeOnDelete();
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+
         });
     }
 

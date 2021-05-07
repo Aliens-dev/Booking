@@ -4,7 +4,9 @@
 namespace Renter;
 
 
+use App\Models\Amenity;
 use App\Models\Client;
+use App\Models\Facility;
 use App\Models\PropertyType;
 use App\Models\Renter;
 use App\Models\Rule;
@@ -25,6 +27,8 @@ class RenterPropertiesTest extends TestCase
         $this->seed(WilayaCommuneSeeder::class);
         PropertyType::factory()->count(5)->create();
         Rule::factory()->create();
+        Facility::factory()->create();
+        Amenity::factory()->create();
     }
 
     /** @test */
@@ -36,7 +40,7 @@ class RenterPropertiesTest extends TestCase
         $response->assertStatus(201);
         $this->assertDatabaseCount('properties',1);
         $data = collect($data);
-        $this->assertDatabaseHas('properties', $data->except('images','type','rules')->toArray());
+        $this->assertDatabaseHas('properties', $data->except('images','type','rules','facilities','amenities')->toArray());
     }
 
     /** @test */
@@ -221,7 +225,8 @@ class RenterPropertiesTest extends TestCase
         $this->assertDatabaseCount('images',1);
     }
 
-    /** @test */
+    /*
+     *
     public function a_property_picture_is_missing()
     {
         $renter = Renter::factory()->create();
@@ -232,6 +237,7 @@ class RenterPropertiesTest extends TestCase
         $this->assertDatabaseCount('images',0);
         $this->assertDatabaseCount('properties', 0);
     }
+    */
 
     /** @test */
     public function a_property_cannot_have_more_than_10_pictures()
@@ -314,16 +320,100 @@ class RenterPropertiesTest extends TestCase
         $this->assertDatabaseCount('properties',0);
     }
     /** @test */
-    public function a_property_rules_if_not_exist_in_rules_table_add_it() {
+    public function a_property_rules_optional() {
+        $this->withoutExceptionHandling();
+        $renter = Renter::factory()->create();
+        $data = $this->data()->except('rules')->toArray();
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response->assertStatus(201);
+        $this->assertDatabaseCount('properties',1);
+    }
+
+    /** @test */
+    public function a_property_rule_must_exist() {
+        $this->withoutExceptionHandling();
+        $renter = Renter::factory()->create();
+        $data = $this->data()->except('rules')->toArray();
+        $data['rules'] = [
+            'test'
+        ];
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response->assertStatus(403);
+        $this->assertDatabaseCount('properties',0);
+    }
+
+    /** @test */
+    public function a_property_facilities_added_to_db() {
         $this->withoutExceptionHandling();
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $response = $this->actingAs($renter)->json('POST', '/properties', $data);
         $response->assertStatus(201);
         $this->assertDatabaseCount('properties',1);
-        $this->assertDatabaseCount('rules',1);
-        $this->assertDatabaseCount('property_rules',1);
+        $this->assertDatabaseCount('facility_properties',1);
     }
+
+    /** @test */
+    public function a_property_facilities_optional() {
+        $this->withoutExceptionHandling();
+        $renter = Renter::factory()->create();
+        $data = $this->data()->except('facilities')->toArray();
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response->assertStatus(201);
+        $this->assertDatabaseCount('properties',1);
+    }
+
+    /** @test */
+    public function a_property_facility_must_exist() {
+        $this->withoutExceptionHandling();
+        $renter = Renter::factory()->create();
+        $data = $this->data()->except('facilities')->toArray();
+        $data['facilities'] = [
+            'test'
+        ];
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response->assertStatus(403)
+            ->assertJsonValidationErrors('facilities.0');
+        $this->assertDatabaseCount('properties',0);
+    }
+
+
+
+    /** @test */
+    public function a_property_amenities_added_to_db() {
+        $this->withoutExceptionHandling();
+        $renter = Renter::factory()->create();
+        $data = $this->data()->toArray();
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response->assertStatus(201);
+        $this->assertDatabaseCount('properties',1);
+        $this->assertDatabaseCount('amenity_properties',1);
+    }
+
+    /** @test */
+    public function a_property_amenities_optional() {
+        $this->withoutExceptionHandling();
+        $renter = Renter::factory()->create();
+        $data = $this->data()->except('amenities')->toArray();
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response->assertStatus(201);
+        $this->assertDatabaseCount('properties',1);
+    }
+
+    /** @test */
+    public function a_property_amenity_must_exist() {
+        $this->withoutExceptionHandling();
+        $renter = Renter::factory()->create();
+        $data = $this->data()->except('amenities')->toArray();
+        $data['amenities'] = [
+            'test'
+        ];
+        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response->assertStatus(403)
+            ->assertJsonValidationErrors('amenities.0');
+        $this->assertDatabaseCount('properties',0);
+    }
+
     private function data() {
         $picture = UploadedFile::fake()->image('pic.png');
         return collect([
@@ -343,6 +433,12 @@ class RenterPropertiesTest extends TestCase
             ],
             'rules' => [
                 'PET_NOT_ALLOWED',
+            ],
+            'facilities' => [
+                "FREE_PARKING",
+            ],
+            'amenities' => [
+                "KITCHEN",
             ],
         ]);
     }
