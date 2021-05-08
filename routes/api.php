@@ -14,6 +14,7 @@ use App\Http\Controllers\Properties\PropertiesController;
 use App\Http\Controllers\Properties\PropertiesRatingController;
 use App\Http\Controllers\Properties\PropertiesRentController;
 use App\Http\Controllers\Properties\PropertyImagesController;
+use App\Http\Controllers\PropertyTypes\PropertyTypeController;
 use App\Http\Controllers\Rules\RulesController;
 use App\Http\Controllers\Users\UserAccountController;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,13 @@ Route::group(['prefix' => 'amenities'], function() {
     Route::post('/',[AmenitiesController::class,'store']);
     Route::patch('/{amenity}',[AmenitiesController::class,'update']);
     Route::delete('/{amenity}',[AmenitiesController::class,'destroy']);
+});
+
+Route::group(['prefix' => 'property_types'], function() {
+    Route::get('/',[PropertyTypeController::class,'index']);
+    Route::post('/',[PropertyTypeController::class,'store']);
+    Route::patch('/{propertyType}',[PropertyTypeController::class,'update']);
+    Route::delete('/{propertyType}',[PropertyTypeController::class,'destroy']);
 });
 
 Route::group(['prefix' => 'properties'], function() {
