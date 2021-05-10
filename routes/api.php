@@ -13,6 +13,7 @@ use App\Http\Controllers\Facilities\FacilitiesController;
 use App\Http\Controllers\Properties\PropertiesController;
 use App\Http\Controllers\Properties\PropertiesRatingController;
 use App\Http\Controllers\Properties\PropertiesRentController;
+use App\Http\Controllers\Properties\PropertiesRulesController;
 use App\Http\Controllers\Properties\PropertyImagesController;
 use App\Http\Controllers\PropertyTypes\PropertyTypeController;
 use App\Http\Controllers\Rules\RulesController;
@@ -70,6 +71,9 @@ Route::group(['prefix' => 'properties'], function() {
     /* rating */
     Route::post('/{property}/rating', [PropertiesRatingController::class, 'store']);
     Route::delete('/{property}/rating/{rating}', [PropertiesRatingController::class, 'destroy']);
+
+    /* property_rules */
+    Route::get('/{property}/rules', [PropertiesRulesController::class, 'index']);
 
     Route::patch('/{property}', [PropertiesController::class, 'update']);
     Route::delete('/{property}', [PropertiesController::class, 'destroy']);

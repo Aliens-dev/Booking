@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Reservation extends Model
 {
     use HasFactory;
-
+    protected $hidden = ['pivot'];
     protected $dates = [
         'created_at',
         'updated_at',

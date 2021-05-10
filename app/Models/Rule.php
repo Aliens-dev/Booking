@@ -11,7 +11,7 @@ class Rule extends Model
 
     protected $fillable = ['name'];
 
-
+    protected $hidden = ['pivot'];
 
     public function properties()
     {

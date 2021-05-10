@@ -97,7 +97,6 @@ class ClientRatingsTest extends TestCase
         $this->assertDatabaseCount('ratings',0);
     }
     /** @test */
-
     public function a_visitor_cannot_add_rating()
     {
         PropertyType::factory()->create();
@@ -110,4 +109,5 @@ class ClientRatingsTest extends TestCase
             ->assertStatus(401);
         $this->assertDatabaseCount('ratings',0);
     }
+
 }

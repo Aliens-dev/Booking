@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class PropertyRule extends Model
 {
     use HasFactory;
+
+    protected $hidden = ['pivot'];
 }

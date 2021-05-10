@@ -20,7 +20,37 @@ class PropertiesController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth:users','renter.auth']);
+        $this->middleware(['auth:users','renter.auth'])->except('index');
+    }
+
+    public function index(Request $request)
+    {
+
+        $properties = Property::query();
+
+        foreach ($request->all() as $key=>$val) {
+            $allowedKeys = ['title','bedrooms','bathrooms','beds','rooms','type','state','city'];
+            if(in_array($key, $allowedKeys)) {
+                if($key == 'title') {
+                    $properties->where('title','like', "%". $val."%");
+                }else if($key == 'type') {
+                    $properties->whereHas($key, function($query) use ($request,$val) {
+                        $query->where('type', $val);
+                    });
+                }else {
+                    if(Property::hasAttribute($key)) {
+                        $properties->where($key,$val);
+                    }
+                }
+            }
+        }
+
+        $properties = $properties->with(['type:id,type','images:id,url'])->paginate( 10);
+        foreach ($properties as $property) {
+            $property->total_ratings = $property->total_ratings();
+            $property->avg_ratings = $property->avg_ratings();
+        }
+        return response()->json(['data' => $properties]);
     }
 
     public function store(Request $request)

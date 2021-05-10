@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class FacilityProperty extends Model
 {
     use HasFactory;
+    protected $hidden = ['pivot'];
 }
