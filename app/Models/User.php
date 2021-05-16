@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    use Notifiable, HasFactory, HasApiTokens;
+    use Notifiable, HasFactory;
 
     protected $table = 'users';
     /**
@@ -34,4 +35,13 @@ class User extends Authenticatable
     protected $guarded = ['created_at', 'updated_at'];
     protected $fillable = ['fname', 'lname', 'email', 'password', 'dob', 'phone_number','user_role'];
 
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }

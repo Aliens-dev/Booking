@@ -20,7 +20,7 @@ class PropertiesController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth:users','renter.auth'])->except('index');
+        $this->middleware(['auth:users','renter.auth'])->except('index','get');
     }
 
     public function index(Request $request)
@@ -85,6 +85,22 @@ class PropertiesController extends Controller
         return response()->json(['success'=> true],201);
     }
 
+    public function get($id)
+    {
+        $property = Property::
+                    with('images')
+                    ->with('amenities')
+                    ->with('facilities')
+                    ->with('type')
+                    ->with('rules')
+                    ->where('id', $id)
+                    ->first();
+        if(is_null($property)) {
+            return response()->json(['success' => false, 'errors' => 'No record found'], 403);
+        }
+        return response()->json(['success' => true, 'data' => $property], 200);
+    }
+
     public function update(Request $request, Property $property)
     {
         $validate = Validator::make($request->all(), $this->rules());
@@ -112,7 +128,7 @@ class PropertiesController extends Controller
         return response()->json(['success' => true], 200);
     }
 
-    public function destroy(Request $request, Property $property)
+    public function destroy(Property $property)
     {
         $inspect = Gate::inspect('delete', $property);
         if($inspect->denied()) {

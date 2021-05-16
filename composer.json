@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "ext-pdo_sqlite": "*",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -14,8 +15,7 @@
         "laravel/sanctum": "^2.10",
         "laravel/tinker": "^2.5",
         "tucker-eric/eloquentfilter": "^2.4",
-        "ext-pdo_sqlite": "*",
-        "doctrine/dbal": "v2.4.2"
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

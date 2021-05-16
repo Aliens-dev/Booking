@@ -3,69 +3,48 @@
 namespace App\Policies;
 
 use App\Models\Renter;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class RenterPolicy
+class UserPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Determine whether the renter can view any models.
-     *
-     * @param Renter $renter
-     * @return mixed
-     */
-    public function viewAny(Renter $renter)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the renter can view the model.
-     *
-     * @param Renter $renter
-     * @param Renter $model
-     * @return mixed
-     */
-    public function view(Renter $renter, Renter $model)
-    {
-        //
-    }
 
     /**
      * Determine whether the renter can create models.
      *
-     * @param Renter $renter
-     * @param Renter $model
+     * @param User $user
+     * @param User $model
      * @return mixed
      */
-    public function create(Renter $renter, Renter $model)
+    public function create(User $user, User $model)
     {
-        return $renter->id == $model->id;
+        return $user->id == $model->id;
     }
 
     /**
      * Determine whether the renter can update the model.
      *
-     * @param Renter $renter
-     * @param Renter $model
+     * @param User $user
+     * @param User $model
      * @return mixed
      */
-    public function update(Renter $renter, Renter $model)
+    public function update(User $user, User $model)
     {
-        return $renter->id == $model->id;
+        return $user->id == $model->id;
     }
 
     /**
      * Determine whether the renter can delete the model.
      *
-     * @param Renter $renter
-     * @param Renter $model
+     * @param User $user
+     * @param User $model
      * @return mixed
      */
-    public function delete(Renter $renter, Renter $model)
+    public function delete(User $user, User $model)
     {
-        return $renter->id == $model->id;
+        return $user->id == $model->id;
     }
 
     /**

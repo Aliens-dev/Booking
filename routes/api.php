@@ -18,8 +18,11 @@ use App\Http\Controllers\Properties\PropertyImagesController;
 use App\Http\Controllers\PropertyTypes\PropertyTypeController;
 use App\Http\Controllers\Rules\RulesController;
 use App\Http\Controllers\Users\UserAccountController;
+use App\Http\Controllers\Users\UserLoginController;
 use Illuminate\Support\Facades\Route;
 
+
+Route::post('login', [UserLoginController::class, 'login']);
 
 Route::group(['prefix' => 'users'], function() {
     Route::post('/', [UserAccountController::class, 'store']);
@@ -58,6 +61,7 @@ Route::group(['prefix' => 'property_types'], function() {
 Route::group(['prefix' => 'properties'], function() {
     Route::get('/', [PropertiesController::class, 'index']);
     Route::post('/', [PropertiesController::class, 'store']);
+    Route::get('/{id}', [PropertiesController::class, 'get']);
     /* images */
     Route::delete('/{property}/images/{image}', [PropertyImagesController::class, 'destroySingle']);
     Route::get('/{property}/images', [PropertyImagesController::class, 'index']);

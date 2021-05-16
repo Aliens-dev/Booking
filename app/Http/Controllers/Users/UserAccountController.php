@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Models\Renter;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class UserAccountController extends Controller
+
+class UserAccountController extends ApiController
 {
 
     public function __construct()
@@ -35,13 +38,30 @@ class UserAccountController extends Controller
             'phone_number' => 'required|regex:/^0[567]{1}[0-9]{8}$/i',
             'user_role' => 'required|in:client,renter',
             'dob' => 'required|date',
+            'profile_pic' => 'required|image|mimes:jpg,png',
+            'identity_pic' => 'required|image|mimes:jpg,png',
         ];
         $validated = Validator::make($request->all(), $rules);
         if($validated->fails()) {
             return response()->json(['success' => false, 'errors' =>$validated->errors()], 403);
         }
+        $user = User::create($validated->validated());
+        $user->sendEmailVerificationNotification();
 
-        Renter::create($validated->validated())->sendEmailVerificationNotification();
+        $user->profile_pic = "uploads/{$user->user_role}/" . $request->file('profile_pic')
+            ->storePubliclyAs(
+                $user->id,
+                $request->file('profile_pic')->getClientOriginalName(),
+                $user->user_role
+            );
+        $user->identity_pic =  "uploads/{$user->user_role}/" . $request->file('profile_pic')
+            ->storePubliclyAs(
+                $user->id,
+                $request->file('identity_pic')->getClientOriginalName(),
+                $user->user_role
+        );
+
+        $user->save();
         return response()->json(['success'=> true], 201);
     }
 
@@ -49,11 +69,11 @@ class UserAccountController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param Renter $user
+     * @param User $user
      * @return JsonResponse
      * @throws ValidationException
      */
-    public function update(Request $request, Renter $user)
+    public function update(Request $request, User $user)
     {
         $rules = [
             'fname' => 'required|min:3|max:30',
@@ -61,8 +81,9 @@ class UserAccountController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'required|confirmed',
             'phone_number' => 'required|regex:/^0[567]{1}[0-9]{8}$/i',
-            'address' => 'required',
             'dob' => 'required|date',
+            'profile_pic' => 'sometimes|required|image|mimes:jpg,png',
+            'identity_pic' => 'sometimes|required|image|mimes:jpg,png',
         ];
 
         $validate = Validator::make($request->all(), $rules);
@@ -71,11 +92,29 @@ class UserAccountController extends Controller
         }
         $inspect = Gate::inspect('update', $user);
         if($inspect->denied()) {
-            return response()->json(['success' => false, 'errors' =>$inspect->message()], 403);
+            return response()->json(['success' => false, 'errors' =>$inspect->message()], 401);
         }
 
         $user->update($validate->validated());
 
+        $user->profile_pic = str_replace("uploads/{$user->user_role}/","", $user->profile_pic);
+        $user->identity_pic = str_replace("uploads/{$user->user_role}/","",$user->identity_pic);
+        Storage::disk($user->user_role)->delete($user->profile_pic);
+        Storage::disk($user->user_role)->delete($user->identity_pic);
+        $user->profile_pic = "uploads/{$user->user_role}/" . $request->file('profile_pic')
+                ->storePubliclyAs(
+                    $user->id,
+                    $request->file('profile_pic')->getClientOriginalName(),
+                    $user->user_role
+                );
+        $user->identity_pic =  "uploads/{$user->user_role}/" . $request->file('profile_pic')
+                ->storePubliclyAs(
+                    $user->id,
+                    $request->file('identity_pic')->getClientOriginalName(),
+                    $user->user_role
+                );
+
+        $user->save();
         return response()->json(['success'=> true], 200);
     }
 
@@ -85,7 +124,7 @@ class UserAccountController extends Controller
      * @param Renter $user
      * @return JsonResponse
      */
-    public function destroy(Renter $user)
+    public function destroy(User $user)
     {
         $inspect = Gate::inspect('delete', $user);
         if($inspect->denied()) {

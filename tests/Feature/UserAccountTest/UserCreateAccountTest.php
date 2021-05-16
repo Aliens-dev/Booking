@@ -9,7 +9,9 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -217,8 +219,57 @@ class UserCreateAccountTest extends TestCase
         $user = User::find(1);
         $this->assertFalse($user->hasVerifiedEmail());
     }
-
+    /** @test */
+    public function a_renter_profile_pic_uploaded() {
+        $data = $this->userCollection()->toArray();
+        $this->json('post','/users',$data);
+        $user = User::find(1);
+        $this->assertDatabaseHas('users',
+            [
+                'profile_pic' => 'uploads/renter/1/profile.jpg'
+            ]
+        );
+    }
+    /** @test */
+    public function a_renter_id_pic_uploaded() {
+        $data = $this->userCollection()->toArray();
+        $this->json('post','/users',$data);
+        $user = User::find(1);
+        $this->assertDatabaseHas('users',
+            [
+                'identity_pic' => 'uploads/renter/1/id.jpg'
+            ]
+        );
+    }
+    /** @test */
+    public function a_client_profile_pic_uploaded() {
+        $data = $this->userCollection()->toArray();
+        $data['user_role'] = 'client';
+        $this->json('post','/users',$data);
+        $user = User::find(1);
+        $this->assertDatabaseHas('users',
+            [
+                'profile_pic' => 'uploads/client/1/profile.jpg'
+            ]
+        );
+    }
+    /** @test */
+    public function a_client_id_pic_uploaded() {
+        $data = $this->userCollection()->toArray();
+        $data['user_role'] = 'client';
+        $this->json('post','/users',$data);
+        $user = User::find(1);
+        $this->assertDatabaseHas('users',
+            [
+                'identity_pic' => 'uploads/client/1/id.jpg'
+            ]
+        );
+    }
     private function userCollection() {
+        Storage::fake('users');
+        $profile_pic = UploadedFile::fake()->image('profile.jpg');
+        $id_pic = UploadedFile::fake()->image('id.jpg');
+
         return collect([
             'fname' => 'nabil',
             'lname' => 'merazga',
@@ -229,6 +280,8 @@ class UserCreateAccountTest extends TestCase
             'dob' => '25-06-2000',
             'company' => 'aliensdev',
             'user_role' => 'renter',
+            'profile_pic' => $profile_pic,
+            'identity_pic' => $id_pic
         ]);
     }
 }
