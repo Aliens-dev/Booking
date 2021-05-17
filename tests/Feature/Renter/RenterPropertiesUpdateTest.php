@@ -25,9 +25,6 @@ class RenterPropertiesUpdateTest extends TestCase
 
         $this->seed(WilayaCommuneSeeder::class);
         PropertyType::factory()->count(5)->create();
-        Rule::factory()->create();
-        Facility::factory()->create();
-        Amenity::factory()->create();
     }
 
     /** @test */
@@ -37,7 +34,6 @@ class RenterPropertiesUpdateTest extends TestCase
         $renter = Renter::factory()->create();
         PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
-        $picture = UploadedFile::fake()->image('pic.png');
         $data = [
             'title' => 'prop 1',
             'state' => 'Alger',
@@ -50,29 +46,14 @@ class RenterPropertiesUpdateTest extends TestCase
             'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
-            'images' => [
-                'image_1' => $picture,
-            ],
-            'rules' => [
-                'PET_NOT_ALLOWED',
-            ],
-            'facilities' => [
-                "FREE_PARKING",
-            ],
-            'amenities' => [
-                "KITCHEN",
-            ],
         ];
         $property = $property->toArray();
         $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $data)
             ->assertStatus(200);
 
         $this->assertDatabaseCount('properties',1);
-        $this->assertDatabaseHas('properties', collect($data)->except('images','type','rules','facilities','amenities')->toArray());
-        $this->assertDatabaseCount('property_rules',1);
-        $this->assertDatabaseCount('amenity_properties',1);
-        $this->assertDatabaseCount('facility_properties',1);
-        $this->assertDatabaseCount('images',1);
+        $this->assertDatabaseHas('properties', collect($data)->except('type')->toArray());
+
     }
 
     /** @test */
@@ -302,57 +283,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $this->assertDatabaseCount('properties',1);
         $this->assertDatabaseHas('properties', ['description' => $desc]);
     }
-    /** @test */
-    public function if_pics_are_not_changed_the_you_can_update_and_keep_old_pics()
-    {
-        $this->withoutExceptionHandling();
-        $renter = Renter::factory()->create();
-        PropertyType::factory()->create();
-        $property = Property::factory()->create(['user_id' => $renter->id]);
-        $property->images()->create(['url' => '1.jpg']);
-        $property->images()->create(['url' => '2.jpg']);
-        $data = [
-            'title' => 'prop 1',
-            'state' => 'Alger',
-            'city' => 'Alger Centre',
-            'street' => 'lorem ipsum',
-            'price' => 5000,
-            'bedrooms' => 4,
-            'bathrooms' => 4,
-            'beds' => 4,
-            'type' => 'house',
-            'description' => 'some text for description',
-            'rooms' => 3,
-        ];
-        $this->actingAs($renter)->json('patch','/properties/'. $property->id, $data)
-            ->assertStatus(200);
-        $this->assertDatabaseCount('properties',1);
-        $this->assertDatabaseCount('images', 2);
-        $this->assertDatabaseHas('properties', collect($data)->except('type')->toArray());
-    }
-    /** @test */
-    public function if_pics_are_updated_if_exist_in_request()
-    {
 
-        $renter = Renter::factory()->create();
-        PropertyType::factory()->create();
-        $property = Property::factory()->create(['user_id' => $renter->id]);
-        $property->images()->create(['url' => '1.jpg']);
-        $property->images()->create(['url' => '2.jpg']);
-        $pictures = [
-            '0' => UploadedFile::fake()->image('pic1.png'),
-            '1' => UploadedFile::fake()->image('pic2.png'),
-            '2' => UploadedFile::fake()->image('pic3.png'),
-            '3' => UploadedFile::fake()->image('pic4.png'),
-        ];
-        $property->images = $pictures;
-        $property->type='house';
-        $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
-            ->assertStatus(200);
-        $this->assertDatabaseCount('properties',1);
-        $this->assertDatabaseCount('images', 4);
-    }
     /** @test */
     public function a_renter_property_bedrooms_required()
     {
@@ -408,13 +339,8 @@ class RenterPropertiesUpdateTest extends TestCase
         $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->type = 'house';
-        $property->rules = [
-            'PET_NOT_ALLOWED',
-        ];
         $property = $property->toArray();
         $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
             ->assertStatus(200);
-        $this->assertDatabaseCount('property_rules',1);
-
     }
 }

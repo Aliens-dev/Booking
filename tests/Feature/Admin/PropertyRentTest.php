@@ -11,10 +11,4 @@ class PropertyRentTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-
-    public function an_admin_can_see_property_ratings()
-    {
-        
-    }
 }

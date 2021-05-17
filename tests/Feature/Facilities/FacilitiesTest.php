@@ -37,7 +37,10 @@ class FacilitiesTest extends TestCase
     {
         $admin = Admin::factory()->create();
         $data = [
-            'name' => 'NO KIDS'
+            'title' => 'Facility',
+            'description' => 'description',
+            'title_ar' => 'Facility',
+            'description_ar' => 'description',
         ];
         $this->actingAs($admin)->json('post','/facilities', $data)
             ->assertStatus(201);
@@ -48,7 +51,10 @@ class FacilitiesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = [
-            'name' => 'NO KIDS'
+            'title' => 'Facility',
+            'description' => 'description',
+            'title_ar' => 'Facility',
+            'description_ar' => 'description',
         ];
         $this->actingAs($renter)->json('post','/facilities', $data)
             ->assertStatus(401);
@@ -59,18 +65,21 @@ class FacilitiesTest extends TestCase
     {
         $client = Client::factory()->create();
         $data = [
-            'name' => 'NO KIDS'
+            'title' => 'Facility',
+            'description' => 'description',
+            'title_ar' => 'Facility',
+            'description_ar' => 'description',
         ];
         $this->actingAs($client)->json('post','/facilities', $data)
             ->assertStatus(401);
         $this->assertDatabaseCount('facilities',0);
     }
     /** @test */
-    public function a_facility_name_is_required()
+    public function a_facility_title_is_required_if_sent()
     {
         $admin = Admin::factory()->create();
         $data = [
-            'name' => ''
+            'title' => '',
         ];
         $this->actingAs($admin)->json('post','/facilities', $data)
             ->assertStatus(403);
@@ -82,25 +91,28 @@ class FacilitiesTest extends TestCase
         $admin = Admin::factory()->create();
         $facility = Facility::factory()->create();
         $data = [
-            'name' => 'new_facility'
+            'title' => 'Facility',
+            'description' => 'description',
+            'title_ar' => 'Facility',
+            'description_ar' => 'description',
         ];
         $this->actingAs($admin)->json('patch','/facilities/' . $facility->id, $data)
             ->assertStatus(200);
         $this->assertDatabaseCount('facilities',1);
-        $this->assertDatabaseHas('facilities',['name' => 'new_facility']);
+        $this->assertDatabaseHas('facilities',['title' => 'Facility']);
     }
     /** @test */
-    public function on_facility_update_name_is_required()
+    public function on_facility_update_title_is_required()
     {
         $admin = Admin::factory()->create();
         $facility = Facility::factory()->create();
         $data = [
-            'name' => ''
+            'title' => '',
         ];
         $this->actingAs($admin)->json('patch','/facilities/' . $facility->id, $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('facilities',1);
-        $this->assertDatabaseHas('facilities',['name' => $facility->name]);
+        $this->assertDatabaseHas('facilities',['title' => $facility->title]);
     }
     /** @test */
     public function an_admin_can_delete_a_facility()

@@ -37,7 +37,10 @@ class RulesTest extends TestCase
     {
         $admin = Admin::factory()->create();
         $data = [
-            'name' => 'NO KIDS'
+            'title' => 'Rule',
+            'description' => 'description',
+            'title_ar' => 'Rule_ar',
+            'description_ar' => 'description_ar',
         ];
         $this->actingAs($admin)->json('post','/rules', $data)
             ->assertStatus(201);
@@ -48,7 +51,10 @@ class RulesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = [
-            'name' => 'NO KIDS'
+            'title' => 'Rule',
+            'description' => 'description',
+            'title_ar' => 'Rule_ar',
+            'description_ar' => 'description_ar',
         ];
         $this->actingAs($renter)->json('post','/rules', $data)
             ->assertStatus(401);
@@ -59,18 +65,21 @@ class RulesTest extends TestCase
     {
         $client = Client::factory()->create();
         $data = [
-            'name' => 'NO KIDS'
+            'title' => 'Rule',
+            'description' => 'description',
+            'title_ar' => 'Rule_ar',
+            'description_ar' => 'description_ar',
         ];
         $this->actingAs($client)->json('post','/rules', $data)
             ->assertStatus(401);
         $this->assertDatabaseCount('rules',0);
     }
     /** @test */
-    public function a_rule_name_is_required()
+    public function a_rule_title_is_required()
     {
         $admin = Admin::factory()->create();
         $data = [
-            'name' => ''
+            'title' => '',
         ];
         $this->actingAs($admin)->json('post','/rules', $data)
             ->assertStatus(403);
@@ -82,12 +91,15 @@ class RulesTest extends TestCase
         $admin = Admin::factory()->create();
         $rule = Rule::factory()->create();
         $data = [
-            'name' => 'new_rule'
+            'title' => 'new Rule',
+            'description' => 'description',
+            'title_ar' => 'new Rule',
+            'description_ar' => 'description_ar',
         ];
         $this->actingAs($admin)->json('patch','/rules/' . $rule->id, $data)
             ->assertStatus(200);
         $this->assertDatabaseCount('rules',1);
-        $this->assertDatabaseHas('rules',['name' => 'new_rule']);
+        $this->assertDatabaseHas('rules',['title' => 'new Rule']);
     }
     /** @test */
     public function on_rule_update_name_is_required()
@@ -95,12 +107,12 @@ class RulesTest extends TestCase
         $admin = Admin::factory()->create();
         $rule = Rule::factory()->create();
         $data = [
-            'name' => ''
+            'title' => '',
         ];
         $this->actingAs($admin)->json('patch','/rules/' . $rule->id, $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('rules',1);
-        $this->assertDatabaseHas('rules',['name' => $rule->name]);
+        $this->assertDatabaseHas('rules',['title' => $rule->title]);
     }
     /** @test */
     public function an_admin_can_delete_a_rule()

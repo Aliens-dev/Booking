@@ -71,10 +71,6 @@ class PropertiesController extends Controller
         $data = collect($validate->validated())->put('type_id',$property_type->id)->toArray();
         $property = auth()->user()->properties()->create($data);
 
-        $this->updatePivot($request,$property,Rule::class, 'rules');
-        $this->updatePivot($request,$property, Facility::class,'facilities');
-        $this->updatePivot($request,$property,Amenity::class,'amenities');
-
         if($request->hasFile('images')) {
             $images = $request->file('images');
             foreach ($images as $image) {
@@ -121,10 +117,6 @@ class PropertiesController extends Controller
             }
         }
 
-        $this->updatePivot($request,$property,Rule::class, 'rules');
-        $this->updatePivot($request,$property, Facility::class,'facilities');
-        $this->updatePivot($request,$property,Amenity::class,'amenities');
-
         return response()->json(['success' => true], 200);
     }
 
@@ -151,25 +143,8 @@ class PropertiesController extends Controller
             'bedrooms' => 'required|min:1|integer',
             'bathrooms' => 'required|min:1|integer',
             'beds' => 'required|min:1|integer',
-            'images' => 'sometimes|required|max:10',
-            'images.*' => 'image|mimes:jpg,bmp,png',
-            'rules' => 'sometimes|required',
-            'rules.*' => 'exists:rules,name',
-            'facilities' => 'sometimes|required',
-            'facilities.*' => 'exists:facilities,name',
-            'amenities' => 'sometimes|required',
-            'amenities.*' => 'exists:amenities,name',
             'description' => 'sometimes|required|max:500',
         ];
     }
 
-    private function updatePivot(Request $request, Property $property, $model,$key) {
-        if($request->has($key)) {
-            $property->{$key}()->delete();
-            foreach ($request->{$key} as $k) {
-                $newK = $model::where('name',$k)->first();
-                $property->{$key}()->attach($newK->id);
-            }
-        }
-    }
 }

@@ -9,7 +9,7 @@ class Rule extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['title','title_ar','description','description_ar'];
 
     protected $hidden = ['pivot'];
 

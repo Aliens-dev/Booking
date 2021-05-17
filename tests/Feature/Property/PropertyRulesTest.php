@@ -24,8 +24,8 @@ class PropertyRulesTest extends TestCase
         PropertyType::factory()->create();
         $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
-        $rule1 = Rule::factory()->create(['name' => 'rule 1']);
-        $rule2 = Rule::factory()->create(['name' => 'rule 2']);
+        $rule1 = Rule::factory()->create(['title' => 'rule 1']);
+        $rule2 = Rule::factory()->create(['title' => 'rule 2']);
         $property->rules()->sync([$rule1->id,$rule2->id]);
         $response = $this->json('get', '/properties/'. $property->id . '/rules');
         $response->assertStatus(200);

@@ -37,7 +37,8 @@ class AmenitiesTest extends TestCase
     {
         $admin = Admin::factory()->create();
         $data = [
-            'name' => 'NO KIDS'
+            'title' => 'PET_NOT_ALLOWED',
+            'description' => 'description',
         ];
         $this->actingAs($admin)->json('post','/amenities', $data)
             ->assertStatus(201);
@@ -48,7 +49,8 @@ class AmenitiesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = [
-            'name' => 'NO KIDS'
+            'title' => 'PET_NOT_ALLOWED',
+            'description' => 'description',
         ];
         $this->actingAs($renter)->json('post','/amenities', $data)
             ->assertStatus(401);
@@ -59,18 +61,20 @@ class AmenitiesTest extends TestCase
     {
         $client = Client::factory()->create();
         $data = [
-            'name' => 'NO KIDS'
+            'title' => 'PET_NOT_ALLOWED',
+            'description' => 'description',
         ];
         $this->actingAs($client)->json('post','/amenities', $data)
             ->assertStatus(401);
         $this->assertDatabaseCount('amenities',0);
     }
     /** @test */
-    public function an_amenity_name_is_required()
+    public function an_amenity_title_is_required_when_existing()
     {
         $admin = Admin::factory()->create();
         $data = [
-            'name' => ''
+            'title' => '',
+            'description' => 'PET_NOT_ALLOWED',
         ];
         $this->actingAs($admin)->json('post','/amenities', $data)
             ->assertStatus(403);
@@ -82,25 +86,28 @@ class AmenitiesTest extends TestCase
         $admin = Admin::factory()->create();
         $Amenity = Amenity::factory()->create();
         $data = [
-            'name' => 'new_Amenity'
+            'title' => 'new_Amenity',
+            'description' => 'description',
+            'title_ar' => 'new Amenity',
+            'description_ar' => 'description',
         ];
         $this->actingAs($admin)->json('patch','/amenities/' . $Amenity->id, $data)
             ->assertStatus(200);
         $this->assertDatabaseCount('amenities',1);
-        $this->assertDatabaseHas('amenities',['name' => 'new_Amenity']);
+        $this->assertDatabaseHas('amenities',['title' => 'new_Amenity']);
     }
     /** @test */
-    public function an_amenity_update_name_is_required()
+    public function an_amenity_update_title_is_required()
     {
         $admin = Admin::factory()->create();
         $Amenity = Amenity::factory()->create();
         $data = [
-            'name' => ''
+            'title' => ''
         ];
         $this->actingAs($admin)->json('patch','/amenities/' . $Amenity->id, $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('amenities',1);
-        $this->assertDatabaseHas('amenities',['name' => $Amenity->name]);
+        $this->assertDatabaseHas('amenities',['title' => $Amenity->title]);
     }
     /** @test */
     public function an_admin_can_delete_an_amenity()

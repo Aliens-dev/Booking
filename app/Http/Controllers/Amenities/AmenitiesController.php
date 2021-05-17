@@ -23,7 +23,10 @@ class AmenitiesController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'name' => 'required|string'
+            'title' => 'sometimes|required|string',
+            'title_ar' => 'sometimes|required|string',
+            'description' => 'sometimes|required|string',
+            'description_ar' => 'sometimes|required|string'
         ];
         $validate = Validator::make($request->all(),$rules);
         if($validate->fails()){
@@ -36,7 +39,10 @@ class AmenitiesController extends Controller
     public function update(Request $request, Amenity $amenity)
     {
         $rules = [
-            'name' => 'required|string'
+            'title' => 'sometimes|required|string',
+            'title_ar' => 'sometimes|required|string',
+            'description' => 'sometimes|required|string',
+            'description_ar' => 'sometimes|required|string'
         ];
         $validate = Validator::make($request->all(),$rules);
         if($validate->fails()){

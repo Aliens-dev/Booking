@@ -24,7 +24,10 @@ class FacilityFactory extends Factory
     public function definition()
     {
         return [
-            'name' => 'FREE_PARKING'
+            'title' => 'PET_NOT_ALLOWED',
+            'title_ar' => 'PET_NOT_ALLOWED',
+            'description' => 'description',
+            'description_ar' => 'description_ar',
         ];
     }
 }
