@@ -10,7 +10,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 use App\Http\Controllers\Amenities\AmenitiesController;
 use App\Http\Controllers\Facilities\FacilitiesController;
+use App\Http\Controllers\Properties\PropertiesAmenitiesController;
 use App\Http\Controllers\Properties\PropertiesController;
+use App\Http\Controllers\Properties\PropertiesFacilitiesController;
 use App\Http\Controllers\Properties\PropertiesRatingController;
 use App\Http\Controllers\Properties\PropertiesRentController;
 use App\Http\Controllers\Properties\PropertiesRulesController;
@@ -82,7 +84,17 @@ Route::group(['prefix' => 'properties'], function() {
     Route::delete('/{property}/rating/{rating}', [PropertiesRatingController::class, 'destroy']);
 
     /* property_rules */
-    Route::get('/{property}/rules', [PropertiesRulesController::class, 'index']);
+    Route::get('/{propertyId}/rules', [PropertiesRulesController::class, 'index']);
+    Route::post('/{propertyId}/rules', [PropertiesRulesController::class, 'store']);
+    Route::delete('/{propertyId}/rules/{ruleId}', [PropertiesRulesController::class, 'destroy']);
+    /* property_facilities */
+    Route::get('/{propertyId}/facilities', [PropertiesFacilitiesController::class, 'index']);
+    Route::post('/{propertyId}/facilities', [PropertiesFacilitiesController::class, 'store']);
+    Route::delete('/{propertyId}/facilities/{facilityId}', [PropertiesFacilitiesController::class, 'destroy']);
+    /* property_amenities */
+    Route::get('/{propertyId}/amenities', [PropertiesAmenitiesController::class, 'index']);
+    Route::post('/{propertyId}/amenities', [PropertiesAmenitiesController::class, 'store']);
+    Route::delete('/{propertyId}/amenities/{amenitiesId}', [PropertiesAmenitiesController::class, 'destroy']);
 
     Route::patch('/{property}', [PropertiesController::class, 'update']);
     Route::delete('/{property}', [PropertiesController::class, 'destroy']);

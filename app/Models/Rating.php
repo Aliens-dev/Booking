@@ -9,7 +9,7 @@ class Rating extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['rating'];
+    protected $fillable = ['rating','updated_at'];
 
     public function property() {
         return $this->belongsTo(Property::class, 'property_id');

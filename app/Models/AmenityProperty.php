@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class AmenityProperty extends Model
 {
     use HasFactory;
-    protected $hidden = ['pivot'];
+    protected $hidden = ['pivot','created_at','updated_at'];
 }

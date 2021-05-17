@@ -71,14 +71,7 @@ class PropertiesController extends Controller
         $data = collect($validate->validated())->put('type_id',$property_type->id)->toArray();
         $property = auth()->user()->properties()->create($data);
 
-        if($request->hasFile('images')) {
-            $images = $request->file('images');
-            foreach ($images as $image) {
-                $image_url = "uploads/" . $image->store($property->id);
-                $property->images()->create(['url' => $image_url]);
-            }
-        }
-        return response()->json(['success'=> true],201);
+        return response()->json(['success'=> true, 'message' => $property],201);
     }
 
     public function get($id)
@@ -108,16 +101,7 @@ class PropertiesController extends Controller
 
         $property->fill($data)->save();
 
-        if($request->hasFile('images')) {
-            $property->images()->delete();
-            $images = $request->file('images');
-            foreach ($images as $image) {
-                $image_url = "uploads/" . $image->store($property->id);
-                $property->images()->create(['url' => $image_url]);
-            }
-        }
-
-        return response()->json(['success' => true], 200);
+        return response()->json(['success' => true, 'message' => $property], 200);
     }
 
     public function destroy(Property $property)

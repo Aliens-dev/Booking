@@ -11,7 +11,7 @@ class Rule extends Model
 
     protected $fillable = ['title','title_ar','description','description_ar'];
 
-    protected $hidden = ['pivot'];
+    protected $hidden = ['pivot','created_at','updated_at'];
 
     public function properties()
     {

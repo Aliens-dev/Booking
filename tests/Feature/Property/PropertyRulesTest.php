@@ -32,4 +32,57 @@ class PropertyRulesTest extends TestCase
         $response->assertSee('rule 1');
         $response->assertSee('rule 2');
     }
+    /** @test */
+    public function add_new_property_rule()
+    {
+        $this->withoutExceptionHandling();
+        $type = PropertyType::factory()->create();
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
+        $rule = Rule::factory()->create(['title' => 'rule 1']);
+        $this->actingAs($renter)->json('post', '/properties/'.$property->id . '/rules',[
+            'id' => $rule->id,
+        ])->assertStatus(201);
+        $this->assertDatabaseHas('property_rules', ['rule_id' => $rule->id]);
+    }
+    /** @test */
+    public function add_new_property_rule_doesnt_exist()
+    {
+        $this->withoutExceptionHandling();
+        $type = PropertyType::factory()->create();
+        $renter = Renter::factory()->create();
+        $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
+        $rule = Rule::factory()->create(['title' => 'rule 1']);
+        $this->actingAs($renter)->json('post', '/properties/'.$property->id . '/rules',[
+            'id' => 999,
+        ])->assertStatus(403)
+            ->assertJsonValidationErrors('id');
+        $this->assertDatabaseCount('property_rules', 0);
+    }
+
+    /** @test */
+    public function delete_rule_from_property()
+    {
+        $this->withoutExceptionHandling();
+        $type = PropertyType::factory()->create();
+        $renter = Renter::factory()->create();
+        $rule = Rule::factory()->create(['title' => 'rule 1']);
+        $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
+        $property->rules()->attach($rule->id);
+        $this->actingAs($renter)->json('delete', '/properties/'.$property->id . '/rules/'.$rule->id)
+            ->assertStatus(200);
+        $this->assertDatabaseCount('property_rules', 0);
+    }
+    /** @test */
+    public function delete_unexisted_rule_from_property()
+    {
+        $type = PropertyType::factory()->create();
+        $renter = Renter::factory()->create();
+        $rule = Rule::factory()->create(['title' => 'rule 1']);
+        $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
+        $property->rules()->attach($rule->id);
+        $this->actingAs($renter)->json('delete', '/properties/'.$property->id . '/rules/999')
+            ->assertStatus(403);
+        $this->assertDatabaseCount('property_rules', 1);
+    }
 }
