@@ -117,7 +117,6 @@ class ClientRentTest extends TestCase
     }
 
     /** @test */
-
     public function a_property_status_is_pending_after_client_rent()
     {
         $this->withoutExceptionHandling();
@@ -132,4 +131,5 @@ class ClientRentTest extends TestCase
         $this->assertDatabaseCount('reservations', 1);
         $this->assertDatabaseHas('properties', ['status' => 'pending']);
     }
+
 }

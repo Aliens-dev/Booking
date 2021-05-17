@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('login', [UserLoginController::class, 'login']);
+Route::post('logout', [UserLoginController::class, 'logout']);
 
 Route::group(['prefix' => 'users'], function() {
     Route::post('/', [UserAccountController::class, 'store']);
@@ -62,16 +63,20 @@ Route::group(['prefix' => 'properties'], function() {
     Route::get('/', [PropertiesController::class, 'index']);
     Route::post('/', [PropertiesController::class, 'store']);
     Route::get('/{id}', [PropertiesController::class, 'get']);
+
     /* images */
     Route::delete('/{property}/images/{image}', [PropertyImagesController::class, 'destroySingle']);
     Route::get('/{property}/images', [PropertyImagesController::class, 'index']);
     Route::post('/{property}/images', [PropertyImagesController::class, 'store']);
     Route::patch('/{property}/images', [PropertyImagesController::class, 'update']);
     Route::delete('/{property}/images', [PropertyImagesController::class, 'destroy']);
+
     /* renting */
+    Route::get('/{property}/rent', [PropertiesRentController::class, 'index']);
     Route::post('/{property}/rent', [PropertiesRentController::class, 'store']);
     Route::patch('/{property}/rent', [PropertiesRentController::class, 'update']);
     Route::delete('/{property}/rent', [PropertiesRentController::class, 'destroy']);
+
     /* rating */
     Route::post('/{property}/rating', [PropertiesRatingController::class, 'store']);
     Route::delete('/{property}/rating/{rating}', [PropertiesRatingController::class, 'destroy']);

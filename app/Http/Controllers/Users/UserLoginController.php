@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Validator;
 class UserLoginController extends ApiController
 {
 
+    public function __construct()
+    {
+        $this->middleware(['auth:users'])->except('login');
+    }
+
     public function login(Request $request)
     {
         $rules = [
@@ -20,7 +25,7 @@ class UserLoginController extends ApiController
         ];
         $validate = Validator::make($request->all(), $rules);
         if($validate->fails()) {
-            $this->errors($validate->errors()->toArray());
+            return response()->json(['success', 'errors' => $validate->errors()], 403);
         }
         $ttl = 60 * 24;
         if($request->has('remember')) {
@@ -29,13 +34,14 @@ class UserLoginController extends ApiController
 
         $token = Auth::setTTL($ttl)->attempt($request->only('email','password'));
         if(!$token) {
-            $this->failed("Wrong email or password");
+            return $this->failed("Wrong email or password");
         }
-        $this->success($token);
+        return $this->success($token);
     }
 
     public function logout(Request $request)
     {
-
+        Auth::logout();
+        return $this->success("successfully logged out");
     }
 }
