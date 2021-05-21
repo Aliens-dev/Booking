@@ -31,7 +31,7 @@ class ClientCancelRentTest extends \Tests\TestCase
         $start_time = Carbon::now()->toDateString();
         $end_time = Carbon::now()->addDays(5)->toDateString();
         $this->client->properties()->attach($property->id, ['start_time' =>$start_time,'end_time' => $end_time]);
-        $this->actingAs($this->client)->json('delete','/properties/'. $property->id . '/rent')
+        $this->actingAs($this->client)->json('delete',route('property.rent.destroy', $property->id))
             ->assertStatus(200);
         $this->assertDatabaseCount('reservations', 0);
     }
@@ -45,7 +45,7 @@ class ClientCancelRentTest extends \Tests\TestCase
         $start_time = Carbon::now()->toDateString();
         $end_time = Carbon::now()->addDays(5)->toDateString();
         $this->client->properties()->attach($property->id, ['start_time' =>$start_time,'end_time' => $end_time]);
-        $this->actingAs($client2)->json('delete','/properties/'. $property->id . '/rent')
+        $this->actingAs($client2)->json('delete',route('property.rent.destroy', $property->id))
             ->assertStatus(401);
         $this->assertDatabaseCount('reservations', 1);
     }
@@ -59,7 +59,7 @@ class ClientCancelRentTest extends \Tests\TestCase
         $property->status = 'pending';
         $property->save();
         $this->client->properties()->attach($property->id, ['start_time' =>$start_time,'end_time' => $end_time]);
-        $this->actingAs($this->client)->json('delete','/properties/'. $property->id . '/rent')
+        $this->actingAs($this->client)->json('delete',route('property.rent.destroy', $property->id))
             ->assertStatus(200);
         $this->assertDatabaseCount('reservations', 0);
         $this->assertDatabaseHas('properties', ['status' => 'available']);

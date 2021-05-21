@@ -48,7 +48,7 @@ class RenterPropertiesUpdateTest extends TestCase
             'rooms' => 3,
         ];
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $data)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $data)
             ->assertStatus(200);
 
         $this->assertDatabaseCount('properties',1);
@@ -66,7 +66,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->title = 'welcome';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(200);
 
         $this->assertDatabaseCount('properties',1);
@@ -84,7 +84,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->title = '';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403)
             ->assertJsonValidationErrors('title');
         $this->assertDatabaseHas('properties', ['title' => $title]);
@@ -100,7 +100,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->state = 'Oran';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(200);
 
         $this->assertDatabaseCount('properties',1);
@@ -117,7 +117,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->state = '';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403)
             ->assertJsonValidationErrors('state');
 
@@ -135,7 +135,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->city = 'Baraki';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(200);
 
         $this->assertDatabaseCount('properties',1);
@@ -152,7 +152,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->city = '';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403)
             ->assertJsonValidationErrors('city');
 
@@ -170,7 +170,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->street = 'some street';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(200);
 
         $this->assertDatabaseCount('properties',1);
@@ -187,7 +187,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->street = '';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403)
             ->assertJsonValidationErrors('street');
 
@@ -205,7 +205,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->price = 4000;
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(200);
 
         $this->assertDatabaseCount('properties',1);
@@ -222,7 +222,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->price = '';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403)
             ->assertJsonValidationErrors('price');
 
@@ -240,7 +240,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->price = 150;
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403)
             ->assertJsonValidationErrors('price');
 
@@ -260,7 +260,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->rooms = $property->rooms + 1;
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(200);
 
         $this->assertDatabaseCount('properties',1);
@@ -277,7 +277,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->description = '';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403);
 
         $this->assertDatabaseCount('properties',1);
@@ -295,7 +295,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->bedrooms = '';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403);
         $this->assertDatabaseHas('properties',['bedrooms' => $bedrooms]);
     }
@@ -310,7 +310,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->bathrooms = '';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403);
         $this->assertDatabaseHas('properties',['bathrooms' => $bathrooms]);
     }
@@ -326,7 +326,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property->beds = '';
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(403);
         $this->assertDatabaseHas('properties',['beds' => $beds]);
     }
@@ -340,7 +340,7 @@ class RenterPropertiesUpdateTest extends TestCase
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->type = 'house';
         $property = $property->toArray();
-        $this->actingAs($renter)->json('patch','/properties/'. $property['id'], $property)
+        $this->actingAs($renter)->json('patch',route('property.update', $property['id']), $property)
             ->assertStatus(200);
     }
 }

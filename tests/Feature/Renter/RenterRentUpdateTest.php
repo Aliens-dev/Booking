@@ -28,7 +28,7 @@ class RenterRentUpdateTest extends TestCase
         $client->properties()->attach($property->id, ['start_time' =>$start_time,'end_time' => $end_time]);
         $property->status = 'pending';
         $property->save();
-        $this->actingAs($renter)->json('delete','/properties/'. $property->id . '/rent')
+        $this->actingAs($renter)->json('delete',route('property.rent.destroy', $property->id))
             ->assertStatus(200);
         $this->assertDatabaseCount('reservations', 0);
         $this->assertDatabaseHas('properties', ['status' => 'available']);
@@ -46,7 +46,7 @@ class RenterRentUpdateTest extends TestCase
         $start_time = Carbon::now()->toDateString();
         $end_time = Carbon::now()->addDays(5)->toDateString();
         $client->properties()->attach($property->id, ['start_time' =>$start_time,'end_time' => $end_time]);
-        $this->actingAs($renter2)->json('delete','/properties/'. $property->id . '/rent')
+        $this->actingAs($renter2)->json('delete',route('property.rent.destroy', $property->id))
             ->assertStatus(401);
         $this->assertDatabaseCount('reservations', 1);
     }
@@ -62,7 +62,7 @@ class RenterRentUpdateTest extends TestCase
         $client->properties()->attach($property->id, ['start_time' =>$start_time,'end_time' => $end_time]);
         $property->status = 'pending';
         $property->save();
-        $this->actingAs($renter)->json('patch','/properties/'. $property->id . '/rent')
+        $this->actingAs($renter)->json('patch',route('property.rent.update', $property->id))
             ->assertStatus(200);
         $this->assertDatabaseCount('reservations', 1);
         $this->assertDatabaseHas('properties', ['status' => 'approved']);
@@ -80,7 +80,7 @@ class RenterRentUpdateTest extends TestCase
         $client->properties()->attach($property->id, ['start_time' =>$start_time,'end_time' => $end_time]);
         $property->status = 'pending';
         $property->save();
-        $this->actingAs($renter2)->json('patch','/properties/'. $property->id . '/rent')
+        $this->actingAs($renter2)->json('patch',route('property.rent.update', $property->id))
             ->assertStatus(401);
         $this->assertDatabaseCount('reservations', 1);
         $this->assertDatabaseHas('properties', ['status' => 'pending']);
@@ -97,7 +97,7 @@ class RenterRentUpdateTest extends TestCase
         $client->properties()->attach($property->id, ['start_time' =>$start_time,'end_time' => $end_time]);
         $property->status = 'pending';
         $property->save();
-        $this->actingAs($client)->json('patch','/properties/'. $property->id . '/rent')
+        $this->actingAs($client)->json('patch',route('property.rent.update', $property->id))
             ->assertStatus(401);
         $this->assertDatabaseCount('reservations', 1);
         $this->assertDatabaseHas('properties', ['status' => 'pending']);

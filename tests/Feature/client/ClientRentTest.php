@@ -33,7 +33,7 @@ class ClientRentTest extends TestCase
         ];
         $property = Property::factory()->create(['user_id' => $this->renter->id]);
 
-        $this->actingAs($this->client)->json('post','/properties/'. $property->id . '/rent', $data)
+        $this->actingAs($this->client)->json('post',route('property.rent.store', $property->id), $data)
             ->assertStatus(201);
 
         $this->assertDatabaseCount('reservations', 1);
@@ -55,7 +55,7 @@ class ClientRentTest extends TestCase
         ];
         $property = Property::factory()->create(['user_id' => $this->renter->id]);
 
-        $this->actingAs($this->client)->json('post','/properties/'. $property->id . '/rent', $data)
+        $this->actingAs($this->client)->json('post',route('property.rent.store', $property->id), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('reservations', 0);
     }
@@ -68,7 +68,7 @@ class ClientRentTest extends TestCase
         ];
         $property = Property::factory()->create(['user_id' => $this->renter->id]);
 
-        $this->actingAs($this->client)->json('post','/properties/'. $property->id . '/rent', $data)
+        $this->actingAs($this->client)->json('post',route('property.rent.store', $property->id), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('reservations', 0);
     }
@@ -83,7 +83,7 @@ class ClientRentTest extends TestCase
         ];
         $property = Property::factory()->create(['user_id' => $this->renter->id]);
 
-        $this->actingAs($this->client)->json('post','/properties/'. $property->id . '/rent', $data)
+        $this->actingAs($this->client)->json('post',route('property.rent.store', $property->id), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('reservations', 0);
     }
@@ -97,7 +97,7 @@ class ClientRentTest extends TestCase
         ];
         $property = Property::factory()->create(['user_id' => $this->renter->id]);
 
-        $this->actingAs($this->client)->json('post','/properties/'. $property->id . '/rent', $data)
+        $this->actingAs($this->client)->json('post',route('property.rent.store', $property->id), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('reservations', 0);
     }
@@ -111,7 +111,7 @@ class ClientRentTest extends TestCase
         ];
         $property = Property::factory()->create(['user_id' => $this->renter->id]);
 
-        $this->actingAs($this->client)->json('post','/properties/'. $property->id . '/rent', $data)
+        $this->actingAs($this->client)->json('post',route('property.rent.store', $property->id), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('reservations', 0);
     }
@@ -126,7 +126,7 @@ class ClientRentTest extends TestCase
         ];
         $property = Property::factory()->create(['user_id' => $this->renter->id]);
 
-        $this->actingAs($this->client)->json('post','/properties/'. $property->id . '/rent', $data)
+        $this->actingAs($this->client)->json('post',route('property.rent.store', $property->id), $data)
             ->assertStatus(201);
         $this->assertDatabaseCount('reservations', 1);
         $this->assertDatabaseHas('properties', ['status' => 'pending']);

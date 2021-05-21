@@ -38,12 +38,13 @@ class PropertyPolicy
     /**
      * Determine whether the user can create models.
      *
-     * @param Renter $renter
+     * @param User $user
+     * @param Property $property
      * @return mixed
      */
-    public function create(Renter $renter)
+    public function create(User $user, Property $property)
     {
-        return $renter instanceof Renter;
+        return $user->id === (int)$property->user_id;
     }
 
     /**

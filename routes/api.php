@@ -21,6 +21,8 @@ use App\Http\Controllers\PropertyTypes\PropertyTypeController;
 use App\Http\Controllers\Rules\RulesController;
 use App\Http\Controllers\Users\UserAccountController;
 use App\Http\Controllers\Users\UserLoginController;
+use App\Http\Controllers\Users\UserPropertiesController;
+use App\Http\Controllers\Users\UserRentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -33,6 +35,61 @@ Route::group(['prefix' => 'users'], function() {
     Route::post('email/resend', 'VerificationController@resend')->name('verification.resend');
     Route::patch('/{user}', [UserAccountController::class, 'update']);
     Route::delete('/{user}', [UserAccountController::class, 'destroy']);
+
+
+    Route::get('/{userId}/properties', [UserPropertiesController::class, 'index'])->name('user.properties.index');
+    Route::get('/{userId}/rent', [UserRentController::class, 'index']);
+    // TODO
+    /*
+        Route::get('/{userId}/ratings', [UserRentController::class, 'index']);
+        Route::get('/{userId}/ratings/properties', [UserRentController::class, 'index']);
+    */
+});
+
+
+Route::group(['prefix' => 'properties'], function() {
+    Route::get('/', [PropertiesController::class, 'index'])->name('property.index');
+    Route::post('/', [PropertiesController::class, 'store'])->name('property.store');
+    Route::get('/{id}', [PropertiesController::class, 'get'])->name('property.get');
+
+    /* renting */
+    Route::get('/{property}/rent', [PropertiesRentController::class, 'index'])->name('property.rent.index');
+    Route::post('/{property}/rent', [PropertiesRentController::class, 'store'])->name('property.rent.store');
+    Route::patch('/{property}/rent', [PropertiesRentController::class, 'update'])->name('property.rent.update');
+    Route::delete('/{property}/rent', [PropertiesRentController::class, 'destroy'])->name('property.rent.destroy');
+
+    /* rating */
+    Route::post('/{property}/rating', [PropertiesRatingController::class, 'store'])->name('property.rating.store');
+
+    // TODO update
+    Route::delete('/{property}/rating/{rating}', [PropertiesRatingController::class, 'destroy'])->name('property.rating.destroy.single');
+
+    // TODO property_types
+
+    /* property_rules */
+    Route::get('/{propertyId}/rules', [PropertiesRulesController::class, 'index'])->name('property.rules.index');
+    Route::post('/{propertyId}/rules', [PropertiesRulesController::class, 'store'])->name('property.rules.store');
+    Route::delete('/{propertyId}/rules/{ruleId}', [PropertiesRulesController::class, 'destroy'])->name('property.rules.destroy');
+
+    /* property_facilities */
+    Route::get('/{propertyId}/facilities', [PropertiesFacilitiesController::class, 'index'])->name('property.facilities.index');
+    Route::post('/{propertyId}/facilities', [PropertiesFacilitiesController::class, 'store'])->name('property.facilities.store');
+    Route::delete('/{propertyId}/facilities/{facilityId}', [PropertiesFacilitiesController::class, 'destroy'])->name('property.facilities.destroy');
+
+    /* property_amenities */
+    Route::get('/{propertyId}/amenities', [PropertiesAmenitiesController::class, 'index'])->name('property.amenities.index');
+    Route::post('/{propertyId}/amenities', [PropertiesAmenitiesController::class, 'store'])->name('property.amenities.store');
+    Route::delete('/{propertyId}/amenities/{amenitiesId}', [PropertiesAmenitiesController::class, 'destroy'])->name('property.amenities.destroy');
+
+    /* property_images */
+    Route::delete('/{property}/images/{image}', [PropertyImagesController::class, 'destroySingle'])->name('property.images.destroy.single');
+    Route::get('/{property}/images', [PropertyImagesController::class, 'index'])->name('property.images.index');
+    Route::post('/{property}/images', [PropertyImagesController::class, 'store'])->name('property.images.store');
+    Route::patch('/{property}/images', [PropertyImagesController::class, 'update'])->name('property.images.update');
+    Route::delete('/{property}/images', [PropertyImagesController::class, 'destroy'])->name('property.images.destroy');
+
+    Route::patch('/{property}', [PropertiesController::class, 'update'])->name('property.update');
+    Route::delete('/{property}', [PropertiesController::class, 'destroy'])->name('property.destroy');
 });
 
 Route::group(['prefix' => 'rules'], function() {
@@ -60,45 +117,5 @@ Route::group(['prefix' => 'property_types'], function() {
     Route::patch('/{propertyType}',[PropertyTypeController::class,'update']);
     Route::delete('/{propertyType}',[PropertyTypeController::class,'destroy']);
 });
-
-Route::group(['prefix' => 'properties'], function() {
-    Route::get('/', [PropertiesController::class, 'index']);
-    Route::post('/', [PropertiesController::class, 'store']);
-    Route::get('/{id}', [PropertiesController::class, 'get']);
-
-    /* images */
-    Route::delete('/{property}/images/{image}', [PropertyImagesController::class, 'destroySingle']);
-    Route::get('/{property}/images', [PropertyImagesController::class, 'index']);
-    Route::post('/{property}/images', [PropertyImagesController::class, 'store']);
-    Route::patch('/{property}/images', [PropertyImagesController::class, 'update']);
-    Route::delete('/{property}/images', [PropertyImagesController::class, 'destroy']);
-
-    /* renting */
-    Route::get('/{property}/rent', [PropertiesRentController::class, 'index']);
-    Route::post('/{property}/rent', [PropertiesRentController::class, 'store']);
-    Route::patch('/{property}/rent', [PropertiesRentController::class, 'update']);
-    Route::delete('/{property}/rent', [PropertiesRentController::class, 'destroy']);
-
-    /* rating */
-    Route::post('/{property}/rating', [PropertiesRatingController::class, 'store']);
-    Route::delete('/{property}/rating/{rating}', [PropertiesRatingController::class, 'destroy']);
-
-    /* property_rules */
-    Route::get('/{propertyId}/rules', [PropertiesRulesController::class, 'index']);
-    Route::post('/{propertyId}/rules', [PropertiesRulesController::class, 'store']);
-    Route::delete('/{propertyId}/rules/{ruleId}', [PropertiesRulesController::class, 'destroy']);
-    /* property_facilities */
-    Route::get('/{propertyId}/facilities', [PropertiesFacilitiesController::class, 'index']);
-    Route::post('/{propertyId}/facilities', [PropertiesFacilitiesController::class, 'store']);
-    Route::delete('/{propertyId}/facilities/{facilityId}', [PropertiesFacilitiesController::class, 'destroy']);
-    /* property_amenities */
-    Route::get('/{propertyId}/amenities', [PropertiesAmenitiesController::class, 'index']);
-    Route::post('/{propertyId}/amenities', [PropertiesAmenitiesController::class, 'store']);
-    Route::delete('/{propertyId}/amenities/{amenitiesId}', [PropertiesAmenitiesController::class, 'destroy']);
-
-    Route::patch('/{property}', [PropertiesController::class, 'update']);
-    Route::delete('/{property}', [PropertiesController::class, 'destroy']);
-});
-
 
 

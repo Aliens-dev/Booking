@@ -27,7 +27,7 @@ class PropertyRulesTest extends TestCase
         $rule1 = Rule::factory()->create(['title' => 'rule 1']);
         $rule2 = Rule::factory()->create(['title' => 'rule 2']);
         $property->rules()->sync([$rule1->id,$rule2->id]);
-        $response = $this->json('get', '/properties/'. $property->id . '/rules');
+        $response = $this->json('get', route('property.rules.index', $property->id));
         $response->assertStatus(200);
         $response->assertSee('rule 1');
         $response->assertSee('rule 2');
@@ -40,7 +40,7 @@ class PropertyRulesTest extends TestCase
         $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
         $rule = Rule::factory()->create(['title' => 'rule 1']);
-        $this->actingAs($renter)->json('post', '/properties/'.$property->id . '/rules',[
+        $this->actingAs($renter)->json('post', route('property.rules.store', $property->id),[
             'id' => $rule->id,
         ])->assertStatus(201);
         $this->assertDatabaseHas('property_rules', ['rule_id' => $rule->id]);
@@ -53,7 +53,7 @@ class PropertyRulesTest extends TestCase
         $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
         $rule = Rule::factory()->create(['title' => 'rule 1']);
-        $this->actingAs($renter)->json('post', '/properties/'.$property->id . '/rules',[
+        $this->actingAs($renter)->json('post', route('property.rules.index', $property->id),[
             'id' => 999,
         ])->assertStatus(403)
             ->assertJsonValidationErrors('id');
@@ -69,7 +69,7 @@ class PropertyRulesTest extends TestCase
         $rule = Rule::factory()->create(['title' => 'rule 1']);
         $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
         $property->rules()->attach($rule->id);
-        $this->actingAs($renter)->json('delete', '/properties/'.$property->id . '/rules/'.$rule->id)
+        $this->actingAs($renter)->json('delete', route('property.rules.destroy',[$property->id, $rule->id]))
             ->assertStatus(200);
         $this->assertDatabaseCount('property_rules', 0);
     }
@@ -81,7 +81,7 @@ class PropertyRulesTest extends TestCase
         $rule = Rule::factory()->create(['title' => 'rule 1']);
         $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
         $property->rules()->attach($rule->id);
-        $this->actingAs($renter)->json('delete', '/properties/'.$property->id . '/rules/999')
+        $this->actingAs($renter)->json('delete', route('property.rules.destroy', [$property->id,999]))
             ->assertStatus(403);
         $this->assertDatabaseCount('property_rules', 1);
     }

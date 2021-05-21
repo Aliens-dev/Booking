@@ -22,7 +22,7 @@ class RenterPropertyDeleteTest extends TestCase
         $renter=  Renter::factory()->create();
         PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
-        $this->actingAs($renter)->json('delete', '/properties/' . $property->id)
+        $this->actingAs($renter)->json('delete', route('property.destroy', $property['id']))
             ->assertStatus(200)
             ->assertSee('success');
         $this->assertDatabaseCount('properties', 0);
@@ -36,7 +36,7 @@ class RenterPropertyDeleteTest extends TestCase
         $renter2=  Renter::factory()->create();
         PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
-        $this->actingAs($renter2)->json('delete', '/properties/' . $property->id)
+        $this->actingAs($renter2)->json('delete',  route('property.destroy', $property['id']))
             ->assertStatus(401)
             ->assertSee('success');
         $this->assertDatabaseCount('properties', 1);
@@ -49,7 +49,7 @@ class RenterPropertyDeleteTest extends TestCase
         $renter=  Renter::factory()->create();
         PropertyType::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id]);
-        $this->json('delete', '/properties/' . $property->id)
+        $this->json('delete',  route('property.destroy', $property['id']))
             ->assertStatus(401);
         $this->assertDatabaseCount('properties', 1);
         $this->assertDatabaseHas('properties', ['id' => 1]);

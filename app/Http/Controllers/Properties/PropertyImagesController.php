@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Properties;
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Models\Image;
 use App\Models\Property;
@@ -11,7 +12,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
-class PropertyImagesController extends Controller
+class PropertyImagesController extends ApiController
 {
 
     public function __construct()
@@ -36,11 +37,40 @@ class PropertyImagesController extends Controller
      *
      * @param Request $request
      * @param Property $property
-     * @return void
+     * @return JsonResponse
      */
     public function store(Request $request, Property $property)
     {
-        dd($property);
+        $inspect = Gate::inspect('create', $property);
+        if($inspect->denied()) {
+            return $this->failed("Not allowed to add images", 401);
+        }
+        $rules = [
+            'images' => 'required',
+            'images.*' => 'image|mimes:jpg,bmp,png',
+        ];
+
+        $validate = Validator::make($request->all(), $rules);
+
+        if($validate->fails()) {
+            return response()->json(['success' => false,'errors' => $validate->errors()], 403);
+        }
+        if($request->hasFile('images')) {
+
+            $property->images()->delete();
+            $images = $request->images;
+            if(is_array($images)) {
+                foreach ($images as $image) {
+                    $image_url = 'uploads/property/' . $image->store($property->id);
+                    $property->images()->create(['url' => $image_url]);
+                }
+            }else {
+                $image_url = 'uploads/property/' . $images->store($property->id);
+                $property->images()->create(['url' => $image_url]);
+            }
+
+        }
+        return $this->success();
     }
 
     /**

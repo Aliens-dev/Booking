@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Renter;
+namespace Property;
 
 
 use App\Models\Property;
@@ -12,7 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class RenterPropertyImagesTest extends TestCase
+class PropertyImagesTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -27,7 +27,7 @@ class RenterPropertyImagesTest extends TestCase
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
         $picture = UploadedFile::fake()->image('pic.png');
-        $response = $this->actingAs($renter)->json('patch', '/properties/'. $property->id . '/images', ['images' => [$picture]]);
+        $response = $this->actingAs($renter)->json('patch',  route('property.images.update', $property->id), ['images' => [$picture]]);
         $response->assertStatus(200);
         $response->assertSee('success');
         $this->assertDatabaseCount('images', 1);
@@ -44,7 +44,7 @@ class RenterPropertyImagesTest extends TestCase
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
-        $response = $this->actingAs($renter)->json('patch', '/properties/'. $property->id . '/images', ['images' => []]);
+        $response = $this->actingAs($renter)->json('patch',  route('property.images.update', $property->id), ['images' => []]);
         $response->assertStatus(403)->assertJsonValidationErrors('images');
         $this->assertDatabaseCount('images', 2);
         $this->assertDatabaseHas('images', ['url' => '1.jpg']);
@@ -60,7 +60,7 @@ class RenterPropertyImagesTest extends TestCase
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
-        $response = $this->actingAs($renter)->json('delete', '/properties/'. $property->id . '/images');
+        $response = $this->actingAs($renter)->json('delete',  route('property.images.destroy', $property->id));
         $response->assertStatus(200);
         $response->assertSee('success');
         $this->assertDatabaseCount('images', 0);
@@ -79,7 +79,7 @@ class RenterPropertyImagesTest extends TestCase
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
         $picture = UploadedFile::fake()->image('pic.png');
-        $response = $this->actingAs($renter2)->json('patch', '/properties/'. $property->id . '/images', ['images' => $picture]);
+        $response = $this->actingAs($renter2)->json('patch',  route('property.images.update', $property->id), ['images' => $picture]);
         $response->assertStatus(403);
         $this->assertDatabaseCount('images', 2);
         $this->assertDatabaseHas('images', ['url' => '1.jpg']);
@@ -98,7 +98,7 @@ class RenterPropertyImagesTest extends TestCase
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
         $picture = UploadedFile::fake()->image('pic.png');
-        $response = $this->actingAs($renter2)->json('delete', '/properties/'. $property->id . '/images');
+        $response = $this->actingAs($renter2)->json('delete', route('property.images.destroy', $property->id));
         $response->assertStatus(403);
         $this->assertDatabaseCount('images', 2);
         $this->assertDatabaseHas('images', ['url' => '1.jpg']);
@@ -114,7 +114,7 @@ class RenterPropertyImagesTest extends TestCase
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
-        $response = $this->actingAs($renter)->json('get', '/properties/'. $property->id . '/images');
+        $response = $this->actingAs($renter)->json('get', route('property.images.index', $property->id));
         $response->assertStatus(200);
         $response->assertSee('success');
         $response->assertJsonCount(2);
@@ -128,7 +128,7 @@ class RenterPropertyImagesTest extends TestCase
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property->images()->create(['url' => '2.jpg']);
-        $response = $this->actingAs($renter)->json('delete', '/properties/'. $property->id . '/images/1');
+        $response = $this->actingAs($renter)->json('delete', route('property.images.destroy.single', [$property->id,1]));
         $response->assertStatus(200);
         $response->assertSee('success');
         $this->assertDatabaseCount('images', 1);
@@ -144,7 +144,7 @@ class RenterPropertyImagesTest extends TestCase
         $property2 = Property::factory()->create(['user_id' => $renter->id]);
         $property->images()->create(['url' => '1.jpg']);
         $property2->images()->create(['url' => '2.jpg']);
-        $response = $this->actingAs($renter)->json('delete', '/properties/'. $property2->id . '/images/1');
+        $response = $this->actingAs($renter)->json('delete',  route('property.images.destroy.single', [$property2->id,1]));
         $response->assertStatus(403);
         $response->assertSee('success');
         $this->assertDatabaseCount('images', 2);

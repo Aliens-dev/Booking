@@ -27,7 +27,7 @@ class PropertyFacilitiesTest extends TestCase
         $facility2 = Facility::factory()->create(['title' => 'facility 2']);
 
         $property->facilities()->sync([$facility1->id,$facility2->id]);
-        $response = $this->json('get', '/properties/'. $property->id . '/facilities');
+        $response = $this->json('get', route('property.facilities.index', $property->id));
         $response->assertStatus(200);
         $response->assertSee('facility 1');
         $response->assertSee('facility 2');
@@ -40,7 +40,7 @@ class PropertyFacilitiesTest extends TestCase
         $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
         $facility = Facility::factory()->create(['title' => 'facility']);
-        $this->actingAs($renter)->json('post', '/properties/'.$property->id . '/facilities',[
+        $this->actingAs($renter)->json('post', route('property.facilities.store', $property->id),[
             'id' => $facility->id,
         ])->assertStatus(201);
         $this->assertDatabaseHas('facility_properties', ['facility_id' => $facility->id]);
@@ -53,7 +53,7 @@ class PropertyFacilitiesTest extends TestCase
         $renter = Renter::factory()->create();
         $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
         $facility = Facility::factory()->create(['title' => 'facility']);
-        $this->actingAs($renter)->json('post', '/properties/'.$property->id . '/facilities',[
+        $this->actingAs($renter)->json('post', route('property.facilities.store', $property->id),[
             'id' => 999,
         ])->assertStatus(403)
             ->assertJsonValidationErrors('id');
@@ -69,7 +69,7 @@ class PropertyFacilitiesTest extends TestCase
         $facility = Facility::factory()->create(['title' => 'facility']);
         $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
         $property->facilities()->attach($facility->id);
-        $this->actingAs($renter)->json('delete', '/properties/'.$property->id . '/facilities/'.$facility->id)
+        $this->actingAs($renter)->json('delete', route('property.facilities.destroy', [$property->id,$facility->id]))
             ->assertStatus(200);
         $this->assertDatabaseCount('facility_properties', 0);
     }
@@ -81,7 +81,7 @@ class PropertyFacilitiesTest extends TestCase
         $facility = Facility::factory()->create(['title' => 'facility']);
         $property = Property::factory()->create(['user_id' => $renter->id, 'type_id' => $type->id]);
         $property->facilities()->attach($facility->id);
-        $this->actingAs($renter)->json('delete', '/properties/'.$property->id . '/facilities/999')
+        $this->actingAs($renter)->json('delete', route('property.facilities.destroy', [$property->id,999]))
             ->assertStatus(403);
         $this->assertDatabaseCount('facility_properties', 1);
     }

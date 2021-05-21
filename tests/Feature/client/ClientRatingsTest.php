@@ -27,7 +27,7 @@ class ClientRatingsTest extends TestCase
         $data = [
             'rating' => 4
         ];
-        $this->actingAs($client)->json('post','/properties/'. $property->id . '/rating', $data)
+        $this->actingAs($client)->json('post',route('property.rating.store', $property->id), $data)
             ->assertStatus(201);
         $this->assertDatabaseCount('ratings',1);
 
@@ -42,7 +42,7 @@ class ClientRatingsTest extends TestCase
         $property = Property::factory()->create(['user_id' => $renter->id]);
         $client = Client::factory()->create();
         $data = [];
-        $this->actingAs($client)->json('post','/properties/'. $property->id . '/rating', $data)
+        $this->actingAs($client)->json('post',route('property.rating.store', $property->id), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('ratings',0);
     }
@@ -57,13 +57,13 @@ class ClientRatingsTest extends TestCase
         $data = [
             'rating' => 0
         ];
-        $this->actingAs($client)->json('post','/properties/'. $property->id . '/rating', $data)
+        $this->actingAs($client)->json('post',route('property.rating.store', $property->id), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('ratings',0);
         $data = [
             'rating' => 6
         ];
-        $this->actingAs($client)->json('post','/properties/'. $property->id . '/rating', $data)
+        $this->actingAs($client)->json('post',route('property.rating.store', $property->id), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('ratings',0);
     }
@@ -77,7 +77,7 @@ class ClientRatingsTest extends TestCase
         $client = Client::factory()->create();
         $rating = Rating::factory()->create(['property_id' => $property->id]);
         $this->assertDatabaseCount('ratings',1);
-        $this->actingAs($client)->json('delete','/properties/'. $property->id . '/rating/'. $rating->id)
+        $this->actingAs($client)->json('delete',route('property.rating.destroy.single', [$property->id,$rating->id]))
             ->assertStatus(200);
         $this->assertDatabaseCount('ratings',0);
     }
@@ -92,7 +92,7 @@ class ClientRatingsTest extends TestCase
             'rating' => 2
         ];
         $client = Client::factory()->create();
-        $this->actingAs($renter)->json('post','/properties/'. $property->id . '/rating/', $data)
+        $this->actingAs($renter)->json('post',route('property.rating.store', $property->id), $data)
             ->assertStatus(401);
         $this->assertDatabaseCount('ratings',0);
     }
@@ -105,7 +105,7 @@ class ClientRatingsTest extends TestCase
         $data = [
             'rating' => 2
         ];
-        $this->json('post','/properties/'. $property->id . '/rating/', $data)
+        $this->json('post',route('property.rating.store', $property->id), $data)
             ->assertStatus(401);
         $this->assertDatabaseCount('ratings',0);
     }

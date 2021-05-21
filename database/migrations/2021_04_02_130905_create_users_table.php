@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('email');
             $table->string('password');
             $table->string('dob');
-            $table->string('phone_number');
+            $table->string('phone_number')->default('');
             $table->string('user_role');
             $table->string('profile_pic')->default('');
             $table->string('identity_pic')->default('');

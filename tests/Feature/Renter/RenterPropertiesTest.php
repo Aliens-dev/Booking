@@ -7,6 +7,7 @@ namespace Renter;
 use App\Models\Amenity;
 use App\Models\Client;
 use App\Models\Facility;
+use App\Models\Property;
 use App\Models\PropertyType;
 use App\Models\Renter;
 use App\Models\Rule;
@@ -26,9 +27,6 @@ class RenterPropertiesTest extends TestCase
         Storage::fake('property');
         $this->seed(WilayaCommuneSeeder::class);
         PropertyType::factory()->count(5)->create();
-        Rule::factory()->create();
-        Facility::factory()->create();
-        Amenity::factory()->create();
     }
 
     /** @test */
@@ -36,7 +34,7 @@ class RenterPropertiesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(201);
         $this->assertDatabaseCount('properties',1);
         $data = collect($data);
@@ -48,7 +46,7 @@ class RenterPropertiesTest extends TestCase
     {
         $client = Client::factory()->create();
         $data = $this->data()->toArray();
-        $response = $this->actingAs($client)->json('POST', '/properties', $data);
+        $response = $this->actingAs($client)->json('POST', route('property.store'), $data);
         $response->assertStatus(401);
         $this->assertDatabaseCount('properties',0);
         $this->assertDatabaseCount('images',0);
@@ -65,7 +63,7 @@ class RenterPropertiesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = $this->data()->except('title')->toArray();
-        $this->actingAs($renter)->post('/properties', $data)
+        $this->actingAs($renter)->post(route('property.store'), $data)
             ->assertStatus(403)
             ->assertJsonValidationErrors('title');
         $this->assertDatabaseCount('properties',0);
@@ -77,7 +75,7 @@ class RenterPropertiesTest extends TestCase
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $data['title'] = 'a';
-        $this->actingAs($renter)->post('/properties', $data)
+        $this->actingAs($renter)->post(route('property.store'), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('properties',0);
     }
@@ -88,7 +86,7 @@ class RenterPropertiesTest extends TestCase
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $data['title'] = "lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum,lorem ipsum";
-        $this->actingAs($renter)->post('/properties', $data)
+        $this->actingAs($renter)->post(route('property.store'), $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('properties',0);
     }
@@ -99,7 +97,7 @@ class RenterPropertiesTest extends TestCase
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $data['state'] = 'Aleraa';
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('state');
         $this->assertDatabaseCount('properties',0);
@@ -111,7 +109,7 @@ class RenterPropertiesTest extends TestCase
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $data['city'] = 'Alger Centress';
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('city');
         $this->assertDatabaseCount('properties',0);
@@ -122,7 +120,7 @@ class RenterPropertiesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = $this->data()->except('street')->toArray();
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('street');
         $this->assertDatabaseCount('properties',0);
@@ -132,7 +130,7 @@ class RenterPropertiesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = $this->data()->except('price')->toArray();
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('price');
         $this->assertDatabaseCount('properties',0);
@@ -143,7 +141,7 @@ class RenterPropertiesTest extends TestCase
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $data['price'] = 1054.1;
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('price');
         $this->assertDatabaseCount('properties',0);
@@ -154,7 +152,7 @@ class RenterPropertiesTest extends TestCase
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $data['price'] = 0;
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('price');
         $this->assertDatabaseCount('properties',0);
@@ -165,7 +163,7 @@ class RenterPropertiesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = $this->data()->except('rooms')->toArray();
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('rooms');
         $this->assertDatabaseCount('properties',0);
@@ -176,7 +174,7 @@ class RenterPropertiesTest extends TestCase
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $data['rooms'] = 1.1;
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('rooms');
         $this->assertDatabaseCount('properties',0);
@@ -188,7 +186,7 @@ class RenterPropertiesTest extends TestCase
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $data['rooms'] = 0;
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('rooms');
         $this->assertDatabaseCount('properties',0);
@@ -199,7 +197,7 @@ class RenterPropertiesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = $this->data()->except('type')->toArray();
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $response->assertJsonValidationErrors('type');
         $this->assertDatabaseCount('properties',0);
@@ -211,7 +209,7 @@ class RenterPropertiesTest extends TestCase
         $renter = Renter::factory()->create();
         $data = $this->data()->toArray();
         $data['city'] = 'Beni Aissi';
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403);
         $this->assertDatabaseCount('properties',0);
     }
@@ -220,7 +218,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_bedrooms_required() {
         $renter = Renter::factory()->create();
         $data = $this->data()->except('bedrooms')->toArray();
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403)->assertJsonValidationErrors('bedrooms');
         $this->assertDatabaseCount('properties',0);
     }
@@ -228,7 +226,7 @@ class RenterPropertiesTest extends TestCase
     public function a_property_bathrooms_required() {
         $renter = Renter::factory()->create();
         $data = $this->data()->except('bathrooms')->toArray();
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403)->assertJsonValidationErrors('bathrooms');
         $this->assertDatabaseCount('properties',0);
     }
@@ -236,10 +234,25 @@ class RenterPropertiesTest extends TestCase
     public function a_property_beds_required() {
         $renter = Renter::factory()->create();
         $data = $this->data()->except('beds')->toArray();
-        $response = $this->actingAs($renter)->json('POST', '/properties', $data);
+        $response = $this->actingAs($renter)->json('POST', route('property.store'), $data);
         $response->assertStatus(403)->assertJsonValidationErrors('beds');
         $this->assertDatabaseCount('properties',0);
     }
+
+    /** @test */
+
+    public function get_all_renter_properties()
+    {
+        $renter = Renter::factory()->create();
+        $type = PropertyType::find(1)->first();
+        $property = Property::factory()->create(['user_id' =>$renter->id, 'type_id' => $type->id]);
+        $renter->properties()->save($property);
+        $this->json('GET', route('user.properties.index', $renter->id))
+            ->assertStatus(200)
+            ->assertSee($property->title);
+    }
+
+    /** @test */
 
     private function data() {
         $picture = UploadedFile::fake()->image('pic.png');
@@ -255,18 +268,6 @@ class RenterPropertiesTest extends TestCase
             'beds' => 3,
             'description' => 'some text for description',
             'rooms' => 3,
-            'images' => [
-                'image_1' => $picture,
-            ],
-            'rules' => [
-                'PET_NOT_ALLOWED',
-            ],
-            'facilities' => [
-                "FREE_PARKING",
-            ],
-            'amenities' => [
-                "KITCHEN",
-            ],
         ]);
     }
 }

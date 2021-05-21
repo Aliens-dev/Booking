@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\ApiController;
 use App\Models\Renter;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -35,31 +36,41 @@ class UserAccountController extends ApiController
             'lname' => 'required|min:3|max:30',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed',
-            'phone_number' => 'required|regex:/^0[567]{1}[0-9]{8}$/i',
+            'phone_number' => 'required|sometimes|regex:/^0[567]{1}[0-9]{8}$/i',
             'user_role' => 'required|in:client,renter',
             'dob' => 'required|date',
-            'profile_pic' => 'required|image|mimes:jpg,png',
-            'identity_pic' => 'required|image|mimes:jpg,png',
+            'profile_pic' => 'required|sometimes|image|mimes:jpg,png',
+            'identity_pic' => 'required|sometimes|image|mimes:jpg,png',
+            'affiliate' => 'required|sometimes'
         ];
         $validated = Validator::make($request->all(), $rules);
         if($validated->fails()) {
             return response()->json(['success' => false, 'errors' =>$validated->errors()], 403);
         }
-        $user = User::create($validated->validated());
-        $user->sendEmailVerificationNotification();
+        $data = $validated->validated();
+        $data['password'] = bcrypt($data['password']);
+        $user = User::create($data);
+        $user->email_verified_at = Carbon::now();
+        $user->save();
+        //$user->sendEmailVerificationNotification();
 
-        $user->profile_pic = "uploads/{$user->user_role}/" . $request->file('profile_pic')
-            ->storePubliclyAs(
-                $user->id,
-                $request->file('profile_pic')->getClientOriginalName(),
-                $user->user_role
-            );
-        $user->identity_pic =  "uploads/{$user->user_role}/" . $request->file('profile_pic')
-            ->storePubliclyAs(
-                $user->id,
-                $request->file('identity_pic')->getClientOriginalName(),
-                $user->user_role
-        );
+        if($request->has('profile_pic')) {
+            $user->profile_pic = "uploads/{$user->user_role}/" . $request->file('profile_pic')
+                    ->storePubliclyAs(
+                        $user->id,
+                        $request->file('profile_pic')->getClientOriginalName(),
+                        $user->user_role
+                    );
+        }
+
+        if($request->has('identity_pic')) {
+            $user->identity_pic =  "uploads/{$user->user_role}/" . $request->file('profile_pic')
+                    ->storePubliclyAs(
+                        $user->id,
+                        $request->file('identity_pic')->getClientOriginalName(),
+                        $user->user_role
+                    );
+        }
 
         $user->save();
         return response()->json(['success'=> true], 201);
