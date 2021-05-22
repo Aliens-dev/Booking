@@ -36,7 +36,11 @@ class UserLoginController extends ApiController
         if(!$token) {
             return $this->failed("Wrong email or password");
         }
-        return $this->success($token);
+        $user = Auth::user();
+        return $this->success([
+            'token' => $token,
+            'user' => $user,
+        ]);
     }
 
     public function logout(Request $request)
