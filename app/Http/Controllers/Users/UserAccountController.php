@@ -57,7 +57,7 @@ class UserAccountController extends ApiController
         $user = User::create($data);
         $user->email_verified_at = Carbon::now();
         $user->save();
-        //$user->sendEmailVerificationNotification();
+        $user->sendEmailVerificationNotification();
 
         if($request->has('profile_pic')) {
             $user->profile_pic = "uploads/{$user->user_role}/" . $request->file('profile_pic')
