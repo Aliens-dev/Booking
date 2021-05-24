@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use DateTimeInterface;
 class Reservation extends Model
 {
     use HasFactory;
@@ -15,4 +15,9 @@ class Reservation extends Model
         'start_time',
         'end_time'
     ];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d');
+    }
 }

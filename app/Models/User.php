@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable, HasFactory;
@@ -34,6 +34,11 @@ class User extends Authenticatable implements JWTSubject
 
     protected $guarded = ['created_at', 'updated_at'];
     protected $fillable = ['fname', 'lname', 'email', 'password', 'dob', 'phone_number','user_role'];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d');
+    }
 
     public function getJWTIdentifier()
     {

@@ -5,7 +5,7 @@ namespace App\Models;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use DateTimeInterface;
 class Property extends Model
 {
     use HasFactory, Filterable;
@@ -18,6 +18,10 @@ class Property extends Model
 
     protected $fillable = ['title','state','city','street','description', 'price','type_id', 'rooms','bedrooms','bathrooms','beds','video'];
 
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d');
+    }
 
     public function type() {
         return $this->belongsTo(PropertyType::class,'type_id');
