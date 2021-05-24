@@ -39,8 +39,8 @@ class FacilitiesTest extends TestCase
         $data = [
             'title' => 'Facility',
             'description' => 'description',
-            'title_ar' => 'Facility',
-            'description_ar' => 'description',
+            'title_fr' => 'Facility',
+            'description_fr' => 'description',
         ];
         $this->actingAs($admin)->json('post','/facilities', $data)
             ->assertStatus(201);
@@ -53,8 +53,8 @@ class FacilitiesTest extends TestCase
         $data = [
             'title' => 'Facility',
             'description' => 'description',
-            'title_ar' => 'Facility',
-            'description_ar' => 'description',
+            'title_fr' => 'Facility',
+            'description_fr' => 'description',
         ];
         $this->actingAs($renter)->json('post','/facilities', $data)
             ->assertStatus(401);
@@ -67,8 +67,8 @@ class FacilitiesTest extends TestCase
         $data = [
             'title' => 'Facility',
             'description' => 'description',
-            'title_ar' => 'Facility',
-            'description_ar' => 'description',
+            'title_fr' => 'Facility',
+            'description_fr' => 'description',
         ];
         $this->actingAs($client)->json('post','/facilities', $data)
             ->assertStatus(401);
@@ -93,8 +93,8 @@ class FacilitiesTest extends TestCase
         $data = [
             'title' => 'Facility',
             'description' => 'description',
-            'title_ar' => 'Facility',
-            'description_ar' => 'description',
+            'title_fr' => 'Facility',
+            'description_fr' => 'description',
         ];
         $this->actingAs($admin)->json('patch','/facilities/' . $facility->id, $data)
             ->assertStatus(200);

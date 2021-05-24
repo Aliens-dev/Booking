@@ -39,8 +39,8 @@ class RulesTest extends TestCase
         $data = [
             'title' => 'Rule',
             'description' => 'description',
-            'title_ar' => 'Rule_ar',
-            'description_ar' => 'description_ar',
+            'title_fr' => 'Rule_fr',
+            'description_fr' => 'description_fr',
         ];
         $this->actingAs($admin)->json('post','/rules', $data)
             ->assertStatus(201);
@@ -53,8 +53,8 @@ class RulesTest extends TestCase
         $data = [
             'title' => 'Rule',
             'description' => 'description',
-            'title_ar' => 'Rule_ar',
-            'description_ar' => 'description_ar',
+            'title_fr' => 'Rule_fr',
+            'description_fr' => 'description_fr',
         ];
         $this->actingAs($renter)->json('post','/rules', $data)
             ->assertStatus(401);
@@ -67,8 +67,8 @@ class RulesTest extends TestCase
         $data = [
             'title' => 'Rule',
             'description' => 'description',
-            'title_ar' => 'Rule_ar',
-            'description_ar' => 'description_ar',
+            'title_fr' => 'Rule_fr',
+            'description_fr' => 'description_fr',
         ];
         $this->actingAs($client)->json('post','/rules', $data)
             ->assertStatus(401);
@@ -93,8 +93,8 @@ class RulesTest extends TestCase
         $data = [
             'title' => 'new Rule',
             'description' => 'description',
-            'title_ar' => 'new Rule',
-            'description_ar' => 'description_ar',
+            'title_fr' => 'new Rule',
+            'description_fr' => 'description_fr',
         ];
         $this->actingAs($admin)->json('patch','/rules/' . $rule->id, $data)
             ->assertStatus(200);

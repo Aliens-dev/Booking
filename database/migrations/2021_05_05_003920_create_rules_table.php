@@ -17,8 +17,8 @@ class CreateRulesTable extends Migration
             $table->id();
             $table->string('title')->default('');
             $table->string('description')->default('');
-            $table->string('title_ar')->default('');
-            $table->string('description_ar')->default('');
+            $table->string('title_fr')->default('');
+            $table->string('description_fr')->default('');
             $table->timestamps();
         });
     }

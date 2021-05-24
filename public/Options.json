@@ -1,0 +1,158 @@
+{
+    "property_types": {
+        "data": [
+            {
+                "id": 1,
+                "title": "Flat",
+                "title_fr": "Appartement",
+                "description": "Typically located in multi-unit residential buildings or complexes where other people live",
+                "description_fr": "Généralement situé dans des immeubles résidentiels à logements multiples ou des complexes où vivent d'autres personnes"
+            },
+            {
+                "id": 2,
+                "title": "House",
+                "title_fr": "Loger",
+                "description": "Often stand-alone structures but some houses, such as semi-detached properties, may share walls or outdoor areas with other houses",
+                "description_fr": "Souvent des structures autonomes, mais certaines maisons, telles que les propriétés jumelées, peuvent partager des murs ou des espaces extérieurs avec d'autres maisons"
+            },
+            {
+                "id": 3,
+                "title": "Secondary unit",
+                "title_fr": "Unité secondaire",
+                "description": "Have a private entrance for guests and usually share property with another structure",
+                "description_fr": "Avoir une entrée privée pour les invités et partager généralement la propriété avec une autre structure"
+            },
+            {
+                "id": 4,
+                "title": "Unique space",
+                "title_fr": "Espace unique",
+                "description": "Places to stay with interesting or unconventional structural attributes in comparison with traditional houses and flats",
+                "description_fr": "Des lieux de séjour avec des attributs structurels intéressants ou non conventionnels par rapport aux maisons et appartements traditionnels"
+            },
+            {
+                "id": 5,
+                "title": "Bed and breakfast",
+                "title_fr": "Lit et petit déjeuné",
+                "description": "Professional hospitality businesses that offer breakfast for guests. A host usually lives on the property.",
+                "description_fr": "Entreprises hôtelières professionnelles qui proposent le petit-déjeuner aux clients. Un hôte habite généralement sur la propriété."
+            },
+            {
+                "id": 6,
+                "title": "Boutique hotel",
+                "title_fr": "Hôtel de charme",
+                "description": "Professional hospitality businesses that usually have a unique style or theme defining their brand and decor",
+                "description_fr": "Entreprises hôtelières professionnelles qui ont généralement un style ou un thème unique définissant leur marque et leur décor"
+            }
+        ]
+    },
+    "type_of_place": {
+        "data": [
+            {
+                "id": 1,
+                "title": "Entire place",
+                "title_fr": "Lieu entier",
+                "description": "Guests have the whole place to themselves – there's a private entrance and no shared spaces. A bedroom, bathroom, and kitchen are usually included.",
+                "description_fr": "Les clients ont toute la place pour eux - il y a une entrée privée et aucun espace partagé. Une chambre, une salle de bains et une cuisine sont généralement incluses."
+            },
+            {
+                "id": 2,
+                "title": "Private room",
+                "title_fr": "Chambre privée",
+                "description": "Guests have their own private room for sleeping. Other areas could be shared.",
+                "description_fr": "Les clients ont leur propre chambre privée pour dormir. D'autres domaines pourraient être partagés."
+            }
+        ]
+    },
+    "amenities": {
+        "data": [
+            {
+                "id": 1,
+                "title": "Kitchen",
+                "title_fr": "Cuisine"
+            },
+            {
+                "id": 2,
+                "title": "Eating",
+                "title_fr": "Nourriture"
+            },
+            {
+                "id": 3,
+                "title": "Air conditioning",
+                "title_fr": "Climatisation"
+            },
+            {
+                "id": 4,
+                "title": "Washing machine",
+                "title_fr": "Machine à laver"
+            },
+            {
+                "id": 5,
+                "title": "Wifi",
+                "title_fr": "Wifi"
+            },
+            {
+                "id": 6,
+                "title": "Breakfast",
+                "title_fr": "Petit-déjeuner"
+            },
+            {
+                "id": 7,
+                "title": "Indoor fireplace",
+                "title_fr": "Cheminée intérieure"
+            },
+            {
+                "id": 8,
+                "title": "Hair dryer",
+                "title_fr": "Sèche-cheveux"
+            },
+            {
+                "id": 9,
+                "title": "TV",
+                "title_fr": "TV"
+            },
+            {
+                "id": 10,
+                "title": "Smoke alarm",
+                "title_fr": "Détecteur de fumé"
+            },
+            {
+                "id": 11,
+                "title": "Private bathroom",
+                "title_fr": "Salle de bains privée"
+            }
+        ]
+    },
+    "facilities": {
+        "data": [
+            {
+                "id": 1,
+                "title": "Free parking",
+                "title_fr": "Parking gratuit"
+            },
+            {
+                "id": 2,
+                "title": "Hottub",
+                "title_fr": "Jacuzzi"
+            },
+            {
+                "id": 3,
+                "title": "Pool",
+                "title_fr": "Piscine"
+            }
+        ]
+    },
+    "rules": {
+        "data": [
+            {
+                "id": 1,
+                "title": "Pets not allowed",
+                "title_fr": "Animaux non admis"
+            },
+            {
+                "id": 2,
+                "title": "Smoking not allowed",
+                "title_fr": "Il est interdit de fumer"
+            }
+        ]
+    }
+}

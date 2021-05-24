@@ -25,9 +25,9 @@ class FacilityFactory extends Factory
     {
         return [
             'title' => 'PET_NOT_ALLOWED',
-            'title_ar' => 'PET_NOT_ALLOWED',
+            'title_fr' => 'PET_NOT_ALLOWED',
             'description' => 'description',
-            'description_ar' => 'description_ar',
+            'description_fr' => 'description_ar',
         ];
     }
 }

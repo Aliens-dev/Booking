@@ -10,6 +10,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 use App\Http\Controllers\Amenities\AmenitiesController;
 use App\Http\Controllers\Facilities\FacilitiesController;
+use App\Http\Controllers\Locations\StateController;
 use App\Http\Controllers\Properties\PropertiesAmenitiesController;
 use App\Http\Controllers\Properties\PropertiesController;
 use App\Http\Controllers\Properties\PropertiesFacilitiesController;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [UserLoginController::class, 'login']);
 Route::post('logout', [UserLoginController::class, 'logout']);
 
+Route::get('wilayas', [StateController::class, 'index'])->name('wilaya.index');
 Route::group(['prefix' => 'users'], function() {
     Route::get('/', [UserAccountController::class, 'index'])->name('users.index');
     Route::get('/{id}', [UserAccountController::class, 'show'])->name('users.show');
@@ -37,7 +39,6 @@ Route::group(['prefix' => 'users'], function() {
     Route::post('email/resend', 'VerificationController@resend')->name('verification.resend');
     Route::patch('/{user}', [UserAccountController::class, 'update']);
     Route::delete('/{user}', [UserAccountController::class, 'destroy']);
-
 
     Route::get('/{userId}/properties', [UserPropertiesController::class, 'index'])->name('user.properties.index');
     Route::get('/{userId}/rent', [UserRentController::class, 'index']);

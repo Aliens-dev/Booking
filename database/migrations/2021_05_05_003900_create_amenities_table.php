@@ -16,9 +16,9 @@ class CreateAmenitiesTable extends Migration
         Schema::create('amenities', function (Blueprint $table) {
             $table->id();
             $table->string('title')->default('');
-            $table->string('title_ar')->default('');
+            $table->string('title_fr')->default('');
             $table->string('description')->default('');
-            $table->string('description_ar')->default('');
+            $table->string('description_fr')->default('');
             $table->timestamps();
         });
     }

@@ -88,8 +88,8 @@ class AmenitiesTest extends TestCase
         $data = [
             'title' => 'new_Amenity',
             'description' => 'description',
-            'title_ar' => 'new Amenity',
-            'description_ar' => 'description',
+            'title_fr' => 'new Amenity',
+            'description_fr' => 'description',
         ];
         $this->actingAs($admin)->json('patch','/amenities/' . $Amenity->id, $data)
             ->assertStatus(200);
