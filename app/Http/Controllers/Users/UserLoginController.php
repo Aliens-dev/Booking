@@ -25,7 +25,7 @@ class UserLoginController extends ApiController
         ];
         $validate = Validator::make($request->all(), $rules);
         if($validate->fails()) {
-            return response()->json(['success', 'errors' => $validate->errors()], 403);
+            return response()->json(['success' => false,'errors' => $validate->errors()], 403);
         }
         $ttl = 60 * 24;
         if($request->has('remember')) {
