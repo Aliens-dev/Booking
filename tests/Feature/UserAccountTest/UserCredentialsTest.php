@@ -81,7 +81,7 @@ class UserCredentialsTest extends TestCase
             'remember' => true,
         ])
             ->assertStatus(200);
-        $token = $response['message'];
+        $token = $response['message']['token'];
         $this->withHeaders([
             'Authorization'=> 'bearer ' . $token
         ])->json('post','/logout')->assertStatus(200);
@@ -97,7 +97,7 @@ class UserCredentialsTest extends TestCase
             'password' => 'password',
             'remember' => true,
         ])->assertStatus(200);
-        $token = $response['message'];
+        $token = $response['message']['token'];
         $this->withHeaders([
             'Authorization'=> 'bearer ' . $token
         ])->json('post','/logout')->assertStatus(200);

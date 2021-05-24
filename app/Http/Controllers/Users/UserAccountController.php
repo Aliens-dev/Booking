@@ -19,9 +19,14 @@ class UserAccountController extends ApiController
 
     public function __construct()
     {
-        $this->middleware(['auth:users','verified:verification.verify'])->except('store');
+        $this->middleware(['auth:users','verified:verification.verify'])->except('store','index','show');
     }
 
+    public function index(Request $request)
+    {
+        $users = User::paginate(10);
+        return $this->success($users);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -73,7 +78,16 @@ class UserAccountController extends ApiController
         }
 
         $user->save();
-        return response()->json(['success'=> true], 201);
+        return response()->json(['success'=> true, 'message' => $user], 201);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $user = User::find($id);
+        if(is_null($user)) {
+            return $this->failed();
+        }
+        return $this->success($user);
     }
 
     /**
@@ -126,13 +140,13 @@ class UserAccountController extends ApiController
                 );
 
         $user->save();
-        return response()->json(['success'=> true], 200);
+        return response()->json(['success'=> true, 'message' => $user], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Renter $user
+     * @param User $user
      * @return JsonResponse
      */
     public function destroy(User $user)
@@ -146,6 +160,6 @@ class UserAccountController extends ApiController
         }catch (\Exception $e) {
             return \response()->json(['success' => false, 'errors' => $e->getMessage()], 403);
         }
-        return response()->json(['success' => true], 200);
+        return response()->json(['success' => $isDeleted], 200);
     }
 }

@@ -84,15 +84,14 @@ class UserCreateAccountTest extends TestCase
         $this->assertDatabaseHas('users', []);
     }
 
-    public function test_user_phone_number_required() {
+    public function test_user_phone_number_optional() {
         $this->withoutExceptionHandling();
 
         $user = $this->userCollection();
         $response = $this->postJson('/users', $user->except('phone_number')->toArray());
 
-        $response->assertStatus(403);
-        $response->assertJson(['success' => false]);
-        $response->assertJsonValidationErrors('phone_number');
+        $response->assertStatus(201);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_user_dob_required() {
@@ -210,8 +209,7 @@ class UserCreateAccountTest extends TestCase
         $response->assertJsonValidationErrors('dob');
         $this->assertDatabaseCount('users',0);
     }
-
-    /** @test */
+/*
     public function a_verification_email_is_sent_when_registering() {
 
         $data = $this->userCollection()->toArray();
@@ -219,6 +217,7 @@ class UserCreateAccountTest extends TestCase
         $user = User::find(1);
         $this->assertFalse($user->hasVerifiedEmail());
     }
+*/
     /** @test */
     public function a_renter_profile_pic_uploaded() {
         $data = $this->userCollection()->toArray();
@@ -265,6 +264,35 @@ class UserCreateAccountTest extends TestCase
             ]
         );
     }
+
+    /** @test */
+    public function get_all_users()
+    {
+        Renter::factory(10)->create();
+        $this->json('get', route('users.index'))
+            ->assertStatus(200)
+            ->assertJsonCount(2);
+    }
+
+    /** @test */
+    public function get_specific_user()
+    {
+        $user = Renter::factory()->create();
+
+        $this->json('get', route('users.show', $user->id))
+            ->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertSee($user->fname);
+    }
+    /** @test */
+    public function get_not_existing_user()
+    {
+        $user = Renter::factory()->create();
+
+        $this->json('get', route('users.show', 2))
+            ->assertStatus(403);
+    }
+
     private function userCollection() {
         Storage::fake('users');
         $profile_pic = UploadedFile::fake()->image('profile.jpg');

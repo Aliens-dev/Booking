@@ -30,6 +30,8 @@ Route::post('login', [UserLoginController::class, 'login']);
 Route::post('logout', [UserLoginController::class, 'logout']);
 
 Route::group(['prefix' => 'users'], function() {
+    Route::get('/', [UserAccountController::class, 'index'])->name('users.index');
+    Route::get('/{id}', [UserAccountController::class, 'show'])->name('users.show');
     Route::post('/', [UserAccountController::class, 'store']);
     Route::post('email/verify/{id}', 'VerificationController@verify')->name('verification.verify');
     Route::post('email/resend', 'VerificationController@resend')->name('verification.resend');
