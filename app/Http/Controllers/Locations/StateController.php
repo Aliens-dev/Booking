@@ -15,4 +15,8 @@ class StateController extends ApiController
         $states = Wilaya::all();
         return $this->success($states);
     }
+    public function show($stateNum)
+    {
+
+    }
 }

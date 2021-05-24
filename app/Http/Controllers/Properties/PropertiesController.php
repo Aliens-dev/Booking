@@ -7,6 +7,7 @@ use App\Models\Amenity;
 use App\Models\Facility;
 use App\Models\Property;
 use App\Models\PropertyType;
+use App\Models\Renter;
 use App\Models\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -70,7 +71,8 @@ class PropertiesController extends Controller
         $property_type = PropertyType::where('title', $request->type)->orWhere('title_fr', $request->type)->first();
         $data = collect($validate->validated())->put('type_id',$property_type->id)->toArray();
 
-        $property = auth()->user()->properties()->create($data);
+        $user = Renter::find(auth()->id());
+        $property = $user->properties()->create($data);
 
         $this->updatePivot($request,$property,Rule::class, 'rules');
         $this->updatePivot($request,$property, Facility::class,'facilities');
@@ -148,7 +150,7 @@ class PropertiesController extends Controller
             'facilities.*' => 'exists:facilities,name',
             'amenities' => 'sometimes|required',
             'amenities.*' => 'exists:amenities,name',
-            'description' => 'sometimes|required|max:500',
+            'description' => 'required|max:500',
         ];
     }
 
