@@ -9,7 +9,7 @@ class PropertyType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type'];
+    protected $fillable = ['title','title_fr','description', 'description_fr'];
     protected $hidden = ['pivot','created_at','updated_at'];
 
     protected function serializeDate(DateTimeInterface $date)

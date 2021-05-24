@@ -10,7 +10,7 @@ class Facility extends Model
     use HasFactory;
     protected $hidden = ['pivot','created_at','updated_at'];
 
-    protected $fillable = ['title','title_fr','description','description_ar'];
+    protected $fillable = ['title','title_fr','description','description_fr'];
 
     protected function serializeDate(DateTimeInterface $date)
     {

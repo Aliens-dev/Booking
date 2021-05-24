@@ -10,7 +10,7 @@ class Amenity extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title','title_ar','description','description_ar'];
+    protected $fillable = ['title','title_fr','description','description_fr'];
     protected $hidden = ['pivot','created_at','updated_at'];
     public function properties() {
         return $this->belongsToMany(Property::class, 'amenity_properties');

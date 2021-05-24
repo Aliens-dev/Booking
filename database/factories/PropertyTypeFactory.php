@@ -23,7 +23,10 @@ class PropertyTypeFactory extends Factory
     {
         $types = ['house', 'hotel','motel','building'];
         return [
-            'type' => 'house'
+            'title' => 'house',
+            'title_fr' => 'house',
+            'description' => 'house',
+            'description_fr' => 'house',
         ];
     }
 }

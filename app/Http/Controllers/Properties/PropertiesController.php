@@ -35,7 +35,7 @@ class PropertiesController extends Controller
                     $properties->where('title','like', "%". $val."%");
                 }else if($key == 'type') {
                     $properties->whereHas($key, function($query) use ($request,$val) {
-                        $query->where('type', $val);
+                        $query->where('title', $val)->orWhere('title_fr', $val);
                     });
                 }else {
                     if(Property::hasAttribute($key)) {
@@ -67,8 +67,9 @@ class PropertiesController extends Controller
             return response()->json(['success' => false, 'errors' => "Commune Name doesn't correspond to any Wilaya"],403);
         }
 
-        $property_type = PropertyType::where('type', $request->type)->first();
+        $property_type = PropertyType::where('title', $request->type)->orWhere('title_fr', $request->type)->first();
         $data = collect($validate->validated())->put('type_id',$property_type->id)->toArray();
+
         $property = auth()->user()->properties()->create($data);
 
         $this->updatePivot($request,$property,Rule::class, 'rules');
@@ -108,7 +109,7 @@ class PropertiesController extends Controller
         if($validate->fails()) {
             return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
         }
-        $property_type = PropertyType::where('type', $request->type)->first();
+        $property_type = PropertyType::where('title', $request->type)->orWhere('title_fr', $request->type)->first();
         $data = collect($validate->validated())->put('type_id',$property_type->id)->toArray();
 
         $property->fill($data)->save();
@@ -134,7 +135,7 @@ class PropertiesController extends Controller
             'city' => ['required', VALRule::in(communes())],
             'street' => 'required|min:3|max:255',
             'price' => 'required|integer|min:200',
-            'type' => 'required|exists:property_types',
+            'type' => 'required|exists:property_types,title',
             'rooms' => 'required|min:1|integer',
             'bedrooms' => 'required|min:1|integer',
             'bathrooms' => 'required|min:1|integer',
@@ -155,7 +156,7 @@ class PropertiesController extends Controller
         if($request->has($key)) {
             $property->{$key}()->delete();
             foreach ($request->{$key} as $k) {
-                $newK = $model::where('name',$k)->first();
+                $newK = $model::where('title',$k)->orWhere('title_fr',$k)->first();
                 $property->{$key}()->attach($newK->id);
             }
         }

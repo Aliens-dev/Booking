@@ -15,7 +15,10 @@ class CreatePropertyTypesTable extends Migration
     {
         Schema::create('property_types', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
+            $table->string('title')->default('');
+            $table->string('title_fr')->default('');
+            $table->text('description')->default('');
+            $table->text('description_fr')->default('');
             $table->timestamps();
         });
     }

@@ -23,7 +23,10 @@ class PropertyTypeController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'type' => 'required|string'
+            'title' => 'required|string',
+            'title_fr' => 'required|sometimes|string',
+            'description' => 'required|sometimes',
+            'description_fr' => 'required|sometimes'
         ];
         $validate = Validator::make($request->all(),$rules);
         if($validate->fails()){
@@ -36,7 +39,10 @@ class PropertyTypeController extends Controller
     public function update(Request $request, PropertyType $propertyType)
     {
         $rules = [
-            'type' => 'required|string'
+            'title' => 'required|string',
+            'title_fr' => 'required|sometimes|string',
+            'description' => 'required|sometimes',
+            'description_fr' => 'required|sometimes'
         ];
         $validate = Validator::make($request->all(),$rules);
         if($validate->fails()){

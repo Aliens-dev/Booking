@@ -37,7 +37,7 @@ class PropertyTypesTest extends TestCase
     {
         $admin = Admin::factory()->create();
         $data = [
-            'type' => 'NO KIDS'
+            'title' => 'NO KIDS'
         ];
         $this->actingAs($admin)->json('post','/property_types', $data)
             ->assertStatus(201);
@@ -48,7 +48,7 @@ class PropertyTypesTest extends TestCase
     {
         $renter = Renter::factory()->create();
         $data = [
-            'type' => 'NO KIDS'
+            'title' => 'NO KIDS'
         ];
         $this->actingAs($renter)->json('post','/property_types', $data)
             ->assertStatus(401);
@@ -59,18 +59,18 @@ class PropertyTypesTest extends TestCase
     {
         $client = Client::factory()->create();
         $data = [
-            'type' => 'NO KIDS'
+            'title' => 'NO KIDS'
         ];
         $this->actingAs($client)->json('post','/property_types', $data)
             ->assertStatus(401);
         $this->assertDatabaseCount('property_types',0);
     }
     /** @test */
-    public function a_propertyType_type_is_required()
+    public function a_propertyType_title_is_required()
     {
         $admin = Admin::factory()->create();
         $data = [
-            'type' => ''
+            'title' => ''
         ];
         $this->actingAs($admin)->json('post','/property_types', $data)
             ->assertStatus(403);
@@ -82,25 +82,25 @@ class PropertyTypesTest extends TestCase
         $admin = Admin::factory()->create();
         $propertyType = PropertyType::factory()->create();
         $data = [
-            'type' => 'new_facility'
+            'title' => 'new_facility'
         ];
         $this->actingAs($admin)->json('patch','/property_types/' . $propertyType->id, $data)
             ->assertStatus(200);
         $this->assertDatabaseCount('property_types',1);
-        $this->assertDatabaseHas('property_types',['type' => 'new_facility']);
+        $this->assertDatabaseHas('property_types',['title' => 'new_facility']);
     }
     /** @test */
-    public function a_propertyType_update_type_is_required()
+    public function a_propertyType_update_title_is_required()
     {
         $admin = Admin::factory()->create();
         $propertyType = PropertyType::factory()->create();
         $data = [
-            'type' => ''
+            'title' => ''
         ];
         $this->actingAs($admin)->json('patch','/property_types/' . $propertyType->id, $data)
             ->assertStatus(403);
         $this->assertDatabaseCount('property_types',1);
-        $this->assertDatabaseHas('property_types',['type' => $propertyType->type]);
+        $this->assertDatabaseHas('property_types',['title' => $propertyType->title]);
     }
     /** @test */
     public function an_admin_can_delete_a_propertyType()
