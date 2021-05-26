@@ -105,7 +105,7 @@ class UserAccountController extends ApiController
             'lname' => 'required|min:3|max:30',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'required|confirmed',
-            'phone_number' => 'required|regex:/^0[567]{1}[0-9]{8}$/i',
+            'phone_number' => 'sometimes|required|regex:/^0[567]{1}[0-9]{8}$/i',
             'dob' => 'required|date',
             'profile_pic' => 'sometimes|required|image|mimes:jpg,png',
             'identity_pic' => 'sometimes|required|image|mimes:jpg,png',
@@ -122,22 +122,27 @@ class UserAccountController extends ApiController
 
         $user->update($validate->validated());
 
-        $user->profile_pic = str_replace("uploads/{$user->user_role}/","", $user->profile_pic);
-        $user->identity_pic = str_replace("uploads/{$user->user_role}/","",$user->identity_pic);
-        Storage::disk($user->user_role)->delete($user->profile_pic);
-        Storage::disk($user->user_role)->delete($user->identity_pic);
-        $user->profile_pic = "uploads/{$user->user_role}/" . $request->file('profile_pic')
-                ->storePubliclyAs(
-                    $user->id,
-                    $request->file('profile_pic')->getClientOriginalName(),
-                    $user->user_role
-                );
-        $user->identity_pic =  "uploads/{$user->user_role}/" . $request->file('profile_pic')
-                ->storePubliclyAs(
-                    $user->id,
-                    $request->file('identity_pic')->getClientOriginalName(),
-                    $user->user_role
-                );
+        if($request->hasFile('profile_pic')) {
+            $user->profile_pic = str_replace("uploads/{$user->user_role}/","", $user->profile_pic);
+            Storage::disk($user->user_role)->delete($user->profile_pic);
+            $user->profile_pic = "uploads/{$user->user_role}/" . $request->file('profile_pic')
+                    ->storePubliclyAs(
+                        $user->id,
+                        $request->file('profile_pic')->getClientOriginalName(),
+                        $user->user_role
+                    );
+        }
+        if($request->hasFile('identity_pic')) {
+            $user->identity_pic = str_replace("uploads/{$user->user_role}/","",$user->identity_pic);
+            Storage::disk($user->user_role)->delete($user->identity_pic);
+            $user->identity_pic =  "uploads/{$user->user_role}/" . $request->file('profile_pic')
+                    ->storePubliclyAs(
+                        $user->id,
+                        $request->file('identity_pic')->getClientOriginalName(),
+                        $user->user_role
+                    );
+        }
+
 
         $user->save();
         return response()->json(['success'=> true, 'message' => $user], 200);

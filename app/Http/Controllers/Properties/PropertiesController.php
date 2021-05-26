@@ -46,7 +46,7 @@ class PropertiesController extends Controller
             }
         }
 
-        $properties = $properties->with(['type:id,type','images:id,url'])->paginate( 10);
+        $properties = $properties->with(['type:id,title','images:id,url'])->paginate( 10);
         foreach ($properties as $property) {
             $property->total_ratings = $property->total_ratings();
             $property->avg_ratings = $property->avg_ratings();
@@ -145,11 +145,11 @@ class PropertiesController extends Controller
             'images' => 'sometimes|required|max:10',
             'images.*' => 'image|mimes:jpg,bmp,png',
             'rules' => 'sometimes|required',
-            'rules.*' => 'exists:rules,name',
+            'rules.*' => 'exists:rules,title',
             'facilities' => 'sometimes|required',
-            'facilities.*' => 'exists:facilities,name',
+            'facilities.*' => 'exists:facilities,title',
             'amenities' => 'sometimes|required',
-            'amenities.*' => 'exists:amenities,name',
+            'amenities.*' => 'exists:amenities,title',
             'description' => 'required|max:500',
         ];
     }
