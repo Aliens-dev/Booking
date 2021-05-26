@@ -24,9 +24,9 @@ class AmenitiesController extends Controller
     {
         $rules = [
             'title' => 'sometimes|required|string',
-            'title_ar' => 'sometimes|required|string',
+            'title_fr' => 'sometimes|required|string',
             'description' => 'sometimes|required|string',
-            'description_ar' => 'sometimes|required|string'
+            'description_fr' => 'sometimes|required|string'
         ];
         $validate = Validator::make($request->all(),$rules);
         if($validate->fails()){
@@ -40,9 +40,9 @@ class AmenitiesController extends Controller
     {
         $rules = [
             'title' => 'sometimes|required|string',
-            'title_ar' => 'sometimes|required|string',
+            'title_fr' => 'sometimes|required|string',
             'description' => 'sometimes|required|string',
-            'description_ar' => 'sometimes|required|string'
+            'description_fr' => 'sometimes|required|string'
         ];
         $validate = Validator::make($request->all(),$rules);
         if($validate->fails()){

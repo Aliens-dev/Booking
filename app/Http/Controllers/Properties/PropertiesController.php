@@ -9,6 +9,7 @@ use App\Models\Property;
 use App\Models\PropertyType;
 use App\Models\Renter;
 use App\Models\Rule;
+use App\Models\TypeOfPlace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -46,7 +47,7 @@ class PropertiesController extends Controller
             }
         }
 
-        $properties = $properties->with(['type:id,title','images:id,url'])->paginate( 10);
+        $properties = $properties->with(['type:id,title','typeOfPlace:id,title','images:id,url'])->paginate( 10);
         foreach ($properties as $property) {
             $property->total_ratings = $property->total_ratings();
             $property->avg_ratings = $property->avg_ratings();
@@ -69,7 +70,12 @@ class PropertiesController extends Controller
         }
 
         $property_type = PropertyType::where('title', $request->type)->orWhere('title_fr', $request->type)->first();
-        $data = collect($validate->validated())->put('type_id',$property_type->id)->toArray();
+        $property_typeOfPlace = TypeOfPlace::where('title', $request->type_of_place)->orWhere('title_fr', $request->type_of_place)->first();
+
+        $data = collect($validate->validated())
+            ->put('type_id',$property_type->id)
+            ->put('type_of_place_id',$property_typeOfPlace->id)
+            ->toArray();
 
         $user = Renter::find(auth()->id());
         $property = $user->properties()->create($data);
@@ -81,7 +87,7 @@ class PropertiesController extends Controller
         if($request->hasFile('images')) {
             $images = $request->file('images');
             foreach ($images as $image) {
-                $image_url = "uploads/" . $image->store($property->id);
+                $image_url = "uploads/property/" . $image->store($property->id);
                 $property->images()->create(['url' => $image_url]);
             }
         }
@@ -97,6 +103,7 @@ class PropertiesController extends Controller
                     ->with('facilities')
                     ->with('type')
                     ->with('rules')
+                    ->with('typeOfPlace')
                     ->where('id', $id)
                     ->first();
         if(is_null($property)) {
@@ -112,7 +119,12 @@ class PropertiesController extends Controller
             return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
         }
         $property_type = PropertyType::where('title', $request->type)->orWhere('title_fr', $request->type)->first();
-        $data = collect($validate->validated())->put('type_id',$property_type->id)->toArray();
+        $property_typeOfPlace = TypeOfPlace::where('title', $request->type_of_place)->orWhere('title_fr', $request->type_of_place)->first();
+
+        $data = collect($validate->validated())
+            ->put('type_id',$property_type->id)
+            ->put('type_of_place_id',$property_typeOfPlace->id)
+            ->toArray();
 
         $property->fill($data)->save();
 
@@ -138,11 +150,14 @@ class PropertiesController extends Controller
             'street' => 'required|min:3|max:255',
             'price' => 'required|integer|min:200',
             'type' => 'required|exists:property_types,title',
+            'type_of_place' => 'required|sometimes|exists:type_of_places,title',
             'rooms' => 'required|min:1|integer',
             'bedrooms' => 'required|min:1|integer',
             'bathrooms' => 'required|min:1|integer',
             'beds' => 'required|min:1|integer',
-            'images' => 'sometimes|required|max:10',
+            'long' => 'required|sometimes',
+            'lat' => 'required|sometimes',
+            'images' => 'sometimes|required|max:10240',
             'images.*' => 'image|mimes:jpg,bmp,png',
             'rules' => 'sometimes|required',
             'rules.*' => 'exists:rules,title',

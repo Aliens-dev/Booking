@@ -16,7 +16,7 @@ class Property extends Model
         'created_at' => 'datetime:Y-m-d',
     ];
 
-    protected $fillable = ['title','state','city','street','description', 'price','type_id', 'rooms','bedrooms','bathrooms','beds','video'];
+    protected $fillable = ['title','state','city','street','description','price','type_id','type_of_place_id','long','lat','rooms','bedrooms','bathrooms','beds','video'];
 
     protected function serializeDate(DateTimeInterface $date)
     {
@@ -25,6 +25,10 @@ class Property extends Model
 
     public function type() {
         return $this->belongsTo(PropertyType::class,'type_id');
+    }
+
+    public function typeOfPlace() {
+        return $this->belongsTo(TypeOfPlace::class,'type_of_place_id');
     }
 
     public function images() {

@@ -20,6 +20,7 @@ use App\Http\Controllers\Properties\PropertiesRulesController;
 use App\Http\Controllers\Properties\PropertyImagesController;
 use App\Http\Controllers\PropertyTypes\PropertyTypeController;
 use App\Http\Controllers\Rules\RulesController;
+use App\Http\Controllers\TypeOfPlace\TypeOfPlaceController;
 use App\Http\Controllers\Users\UserAccountController;
 use App\Http\Controllers\Users\UserLoginController;
 use App\Http\Controllers\Users\UserPropertiesController;
@@ -122,3 +123,9 @@ Route::group(['prefix' => 'property_types'], function() {
 });
 
 
+Route::group(['prefix' => 'type_of_place'], function() {
+    Route::get('/',[TypeOfPlaceController::class,'index']);
+    Route::post('/',[TypeOfPlaceController::class,'store']);
+    Route::patch('/{typeOfPlace}',[TypeOfPlaceController::class,'update']);
+    Route::delete('/{typeOfPlace}',[TypeOfPlaceController::class,'destroy']);
+});

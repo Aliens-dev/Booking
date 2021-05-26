@@ -1,14 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Facilities;
 
-use App\Http\Controllers\Controller;
+namespace App\Http\Controllers\TypeOfPlace;
+
+
+use App\Http\Controllers\ApiController;
 use App\Models\Facility;
+use App\Models\TypeOfPlace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class FacilitiesController extends Controller
+class TypeOfPlaceController extends ApiController
 {
+
     public function __construct()
     {
         $this->middleware(['auth:users','admin.auth'])->except('index');
@@ -16,8 +20,8 @@ class FacilitiesController extends Controller
 
     public function index()
     {
-        $facilities = Facility::all();
-        return response()->json(['success' => true, 'data' => $facilities], 200);
+        $typeOfPlace = TypeOfPlace::all();
+        return response()->json(['success' => true, 'data' => $typeOfPlace], 200);
     }
 
     public function store(Request $request)
@@ -32,12 +36,16 @@ class FacilitiesController extends Controller
         if($validate->fails()){
             return response()->json(['success' => false], 403);
         }
-        Facility::create($validate->validated());
+        TypeOfPlace::create($validate->validated());
         return response()->json(['success' => true], 201);
     }
 
-    public function update(Request $request, Facility $facility)
+    public function update(Request $request, $id)
     {
+        $typeOfPlace = TypeOfPlace::find($id);
+        if(is_null($typeOfPlace)) {
+            return $this->failed("No record found");
+        }
         $rules = [
             'title' => 'sometimes|required|string',
             'title_fr' => 'sometimes|required|string',
@@ -48,12 +56,12 @@ class FacilitiesController extends Controller
         if($validate->fails()){
             return response()->json(['success' => false], 403);
         }
-        $facility->update($validate->validated());
+        $typeOfPlace->update($validate->validated());
         return response()->json(['success' => true], 200);
     }
 
-    public function destroy(Facility $facility) {
-        $facility->delete();
+    public function destroy(TypeOfPlace $typeOfPlace) {
+        $typeOfPlace->delete();
         return response()->json(['success' => true], 200);
     }
 }
