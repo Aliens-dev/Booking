@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','updated_at', 'email_verified_at'
+        'password', 'remember_token','updated_at', 'email_verified_at', 'identity_pic'
     ];
 
     /**
@@ -33,7 +33,19 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     protected $guarded = ['created_at', 'updated_at'];
-    protected $fillable = ['fname', 'lname', 'email', 'password', 'dob', 'phone_number','user_role'];
+    protected $fillable = [
+        'fname',
+        'lname',
+        'email',
+        'password',
+        'dob',
+        'phone_number',
+        'user_role',
+        'profile_pic',
+        'identity_pic',
+        'verified'
+    ];
+
 
     protected function serializeDate(DateTimeInterface $date)
     {
