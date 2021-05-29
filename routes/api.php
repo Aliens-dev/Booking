@@ -24,6 +24,7 @@ use App\Http\Controllers\TypeOfPlace\TypeOfPlaceController;
 use App\Http\Controllers\Users\UserAccountController;
 use App\Http\Controllers\Users\UserLoginController;
 use App\Http\Controllers\Users\UserPropertiesController;
+use App\Http\Controllers\Users\UserRatingsController;
 use App\Http\Controllers\Users\UserRentController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +44,13 @@ Route::group(['prefix' => 'users'], function() {
 
     Route::get('/{userId}/properties', [UserPropertiesController::class, 'index'])->name('user.properties.index');
     Route::get('/{userId}/rent', [UserRentController::class, 'index']);
+
+
+    /* rating users */
+    Route::post('/{user}/rating', [UserRatingsController::class, 'store'])->name('user.rating.store');
+    Route::patch('/{renterId}/rating/{ratingId}', [UserRatingsController::class, 'update'])->name('user.rating.update');
+    Route::delete('/{renterId}/rating/{ratingId}', [UserRatingsController::class, 'destroy'])->name('user.rating.destroy.single');
+
     // TODO
     /*
         Route::get('/{userId}/ratings', [UserRentController::class, 'index']);
@@ -62,10 +70,9 @@ Route::group(['prefix' => 'properties'], function() {
     Route::patch('/{property}/rent', [PropertiesRentController::class, 'update'])->name('property.rent.update');
     Route::delete('/{property}/rent', [PropertiesRentController::class, 'destroy'])->name('property.rent.destroy');
 
-    /* rating */
+    /* rating properties */
     Route::post('/{property}/rating', [PropertiesRatingController::class, 'store'])->name('property.rating.store');
-
-    // TODO update
+    Route::patch('/{property}/rating/{ratingId}', [PropertiesRatingController::class, 'update'])->name('property.rating.update');
     Route::delete('/{property}/rating/{rating}', [PropertiesRatingController::class, 'destroy'])->name('property.rating.destroy.single');
 
     // TODO property_types

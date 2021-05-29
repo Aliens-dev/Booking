@@ -20,4 +20,8 @@ class Renter extends User
     public function properties() {
         return $this->hasMany(Property::class,'user_id');
     }
+
+    public function ratings() {
+        return $this->morphMany(Rating::class, 'rateable','rateable_type','rateable_id');
+    }
 }

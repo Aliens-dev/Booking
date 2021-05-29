@@ -44,7 +44,7 @@ class Property extends Model
     }
 
     public function ratings() {
-        return $this->hasMany(Rating::class, 'property_id');
+        return $this->morphMany(Rating::class, 'rateable','rateable_type','rateable_id');
     }
 
     public function avg_ratings() {

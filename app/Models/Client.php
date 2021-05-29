@@ -20,4 +20,8 @@ class Client extends User
     public function properties() {
         return $this->belongsToMany(Property::class, 'reservations');
     }
+
+    public function ratings() {
+        return $this->hasMany(Rating::class, 'property_id');
+    }
 }

@@ -9,14 +9,15 @@ class Rating extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['rating','updated_at'];
+    protected $fillable = ['rating','client_id'];
 
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d');
     }
 
-    public function property() {
-        return $this->belongsTo(Property::class, 'property_id');
+    public function rateable()
+    {
+        $this->morphTo("rateable",'rateable_type','rateable_id');
     }
 }

@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Properties;
+
+namespace App\Http\Controllers\Users;
+
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
+use App\Models\Client;
 use App\Models\Property;
 use App\Models\Rating;
+use App\Models\Renter;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
-class PropertiesRatingController extends ApiController
+class UserRatingsController extends ApiController
 {
     public function __construct()
     {
@@ -20,12 +24,12 @@ class PropertiesRatingController extends ApiController
 
     /**
      * @param Request $request
-     * @param $propertyId
+     * @param $userId
      * @return JsonResponse
      */
-    public function store(Request $request, $propertyId)
+    public function store(Request $request, $userId)
     {
-        $property = Property::find($propertyId)->first();
+        $user = Renter::find($userId)->first();
         $rules = [
             'rating'=> 'required|integer|min:1|max:5',
         ];
@@ -33,24 +37,24 @@ class PropertiesRatingController extends ApiController
         if($validate->fails()) {
             return response()->json(['success' => false], 403);
         }
-        $property->ratings()->create(['rating' => $request->rating,'client_id' => auth()->id()]);
+        $user->ratings()->create(['rating' => $request->rating,'client_id' => auth()->id()]);
         return response()->json(['success' => true], 201);
     }
 
     /**
      * @param Request $request
-     * @param $propertyId
+     * @param $renterId
      * @param $ratingId
      * @return JsonResponse
      */
-    public function update(Request $request, $propertyId, $ratingId)
+    public function update(Request $request, $renterId, $ratingId)
     {
         $rating = Rating::find($ratingId)->first();
         $inspect = Gate::inspect('update', $rating);
         if($inspect->denied()) {
             return $this->failed($inspect->message(), 401);
         }
-        $property = Property::find($propertyId)->first();
+        $renter = Renter::find($renterId)->first();
         $rules = [
             'rating'=> 'required|integer|min:1|max:5',
         ];
@@ -58,29 +62,28 @@ class PropertiesRatingController extends ApiController
         if($validate->fails()) {
             return response()->json(['success' => false], 403);
         }
-        $rating = $property
-            ->ratings()
+        $renter->ratings()
             ->where('id', $ratingId)
-            ->where('client_id', auth()->id())
+            ->where('client_id',auth()->id())
             ->update(['rating' => $request->rating]);
 
         return response()->json(['success' => true], 200);
     }
 
     /**
-     * @param $propertyId
+     * @param $userId
      * @param $ratingId
      * @return JsonResponse
      */
-    public function destroy($propertyId, $ratingId)
+    public function destroy($userId, $ratingId)
     {
         $rating = Rating::find($ratingId)->first();
         $inspect = Gate::inspect('delete', $rating);
         if($inspect->denied()) {
             return $this->failed($inspect->message(), 401);
         }
-        $property = Property::find($propertyId)->first();
-        $property->ratings()->where('id', $ratingId)->delete();
+        $user = Renter::find($userId)->first();
+        $user->ratings()->where('id', $ratingId)->delete();
         return response()->json(['success' => true], 200);
     }
 }

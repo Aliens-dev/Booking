@@ -16,10 +16,12 @@ class CreateRatingsTable extends Migration
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
             $table->integer('rating');
-            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('rateable_id');
+            $table->string('rateable_type');
+            $table->unsignedBigInteger('client_id');
             $table->timestamps();
 
-            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            $table->foreign('client_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 
