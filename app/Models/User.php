@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\URL;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
@@ -47,9 +48,15 @@ class User extends Authenticatable implements JWTSubject
     ];
 
 
+
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d');
+    }
+
+    public function getProfilePicAttribute($value)
+    {
+        return url('/') . '/' . $value;
     }
 
     public function getJWTIdentifier()

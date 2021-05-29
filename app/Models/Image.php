@@ -9,7 +9,12 @@ class Image extends Model
 {
     use HasFactory;
     protected $fillable = ['url'];
-    protected $hidden = ['created_at','updated_at'];
+    protected $hidden = ['created_at','updated_at','imageable_type','imageable_id'];
+
+    public function getUrlAttribute($value)
+    {
+        return url('/') . '/' . $value;
+    }
 
     public function imageable() {
         return $this->morphTo();
