@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Property;
 use App\Models\PropertyType;
+use App\Models\TypeOfPlace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PropertyFactory extends Factory
@@ -30,6 +31,7 @@ class PropertyFactory extends Factory
             'description' => $this->faker->text(150),
             'price' => rand(250,10000),
             'type_id' => 1,
+            'type_of_place_id' => TypeOfPlace::factory()->create()->id,
             'bedrooms' => rand(1,10),
             'bathrooms' => rand(1,10),
             'beds' => rand(1,10),

@@ -62,13 +62,14 @@ class PropertiesController extends Controller
         if($validate->fails()) {
             return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
         }
-        $wilaya = Wilaya::where('name', $request->state)->first();
-        $commune = Commune::where('wilaya_id', $wilaya->id)->where('name', $request->city)->first();
+        /*
+            $wilaya = Wilaya::where('name', $request->state)->first();
+            $commune = Commune::where('wilaya_id', $wilaya->id)->where('name', $request->city)->first();
 
-        if(! $commune) {
-            return response()->json(['success' => false, 'errors' => "Commune Name doesn't correspond to any Wilaya"],403);
-        }
-
+            if(! $commune) {
+                return response()->json(['success' => false, 'errors' => "Commune Name doesn't correspond to any Wilaya"],403);
+            }
+        */
         $property_type = PropertyType::where('title', $request->type)->orWhere('title_fr', $request->type)->first();
         $property_typeOfPlace = TypeOfPlace::where('title', $request->type_of_place)->orWhere('title_fr', $request->type_of_place)->first();
 
@@ -151,7 +152,7 @@ class PropertiesController extends Controller
             'price' => 'required|integer|min:200',
             'type' => 'required|exists:property_types,title',
             'type_of_place' => 'required|sometimes|exists:type_of_places,title',
-            'rooms' => 'sometimes|required|min:1|integer',
+            'rooms' => 'required|min:1|integer',
             'bedrooms' => 'required|min:1|integer',
             'bathrooms' => 'required|min:1|integer',
             'beds' => 'required|min:1|integer',

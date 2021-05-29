@@ -35,7 +35,4 @@ class PriceService
         return ($this->pricePerDay * $this->days) + $this->getTotalFee();
     }
 
-    public static function calculateFee($days, $price) {
-        
-    }
 }
