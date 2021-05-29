@@ -17,6 +17,7 @@ class CreateCitiesTable extends Migration
             return ;
         }
 
+        /*
         Schema::create('wilayas', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -25,15 +26,17 @@ class CreateCitiesTable extends Migration
             $table->decimal('latitude', 9, 6);
             $table->timestamps();
         });
+        */
 
         Schema::create('communes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('arabic_name');
-            $table->string('post_code');
-            $table->foreignId('wilaya_id')->constrained()->onDelete('cascade');
-            $table->decimal('longitude', 9, 6);
-            $table->decimal('latitude', 9, 6);
+            $table->string('commune_name');
+            $table->string('commune_arabic_name');
+            $table->string('daira_name');
+            $table->string('daira_arabic_name');
+            $table->string('wilaya_name');
+            $table->string('wilaya_arabic_name');
+            $table->string('wilaya_code');
             $table->timestamps();
         });
     }

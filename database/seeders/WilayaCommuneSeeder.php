@@ -18,11 +18,11 @@ class WilayaCommuneSeeder extends Seeder
     public function run()
     {
         // Check if table exist
-        if (! Schema::hasTable('wilayas') || ! Schema::hasTable('communes')) {
+        if (! Schema::hasTable('communes')) {
             Artisan::call('migrate');
         }
 
-        $wilayas = DB::table('wilayas')->count();
+        //$wilayas = DB::table('wilayas')->count();
         $communes = DB::table('communes')->count();
 
         if (!$wilayas && !$communes) {
@@ -31,13 +31,13 @@ class WilayaCommuneSeeder extends Seeder
             return;
         }
 
-        $this->command->comment("Wilayas/Communes already loaded");
+        $this->command->comment("Communes already loaded");
     }
 
 
     protected function loadData()
     {
-        $this->insertWilayas();
+        //$this->insertWilayas();
         $this->insertCommunes();
     }
 
@@ -64,19 +64,20 @@ class WilayaCommuneSeeder extends Seeder
     protected function insertCommunes()
     {
         // Load wilayas from json
-        $communes_json = json_decode(file_get_contents(database_path('seeders/json/Commune_Of_Algeria.json')));
+        $communes_json = json_decode(file_get_contents(database_path('algeria_cities.json')));
 
         // Insert communes
         $data = [];
         foreach ($communes_json as $commune) {
             $data[] = [
                 'id'          => $commune->id,
-                'name'        => $commune->name,
-                'arabic_name' => $commune->ar_name,
-                'post_code'   => $commune->post_code,
-                'wilaya_id'   => $commune->wilaya_id,
-                'longitude'   => $commune->longitude,
-                'latitude'    => $commune->latitude,
+                'commune_name' => $commune->commune_name_ascii,
+                'commune_arabic_name' => $commune->commune_name,
+                'daira_name'   => $commune->daira_name_ascii,
+                'daira_arabic_name'   => $commune->daira_name,
+                'wilaya_code'   => $commune->wilaya_code,
+                'wilaya_name'    => $commune->wilaya_name_ascii,
+                'wilaya_arabic_name'    => $commune->wilaya_name,
                 'created_at'  => now(),
             ];
         }
