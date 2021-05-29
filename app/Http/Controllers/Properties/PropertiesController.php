@@ -145,13 +145,13 @@ class PropertiesController extends Controller
     {
         return [
             'title' => 'required|min:3|max:100',
-            'state' => ['required', VALRule::in(wilayas())],
-            'city' => ['required', VALRule::in(communes())],
+            'state' => 'required',
+            'city' => 'required',
             'street' => 'required|min:3|max:255',
             'price' => 'required|integer|min:200',
             'type' => 'required|exists:property_types,title',
             'type_of_place' => 'required|sometimes|exists:type_of_places,title',
-            'rooms' => 'required|min:1|integer',
+            'rooms' => 'sometimes|required|min:1|integer',
             'bedrooms' => 'required|min:1|integer',
             'bathrooms' => 'required|min:1|integer',
             'beds' => 'required|min:1|integer',
