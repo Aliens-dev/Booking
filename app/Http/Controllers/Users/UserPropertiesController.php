@@ -18,7 +18,7 @@ class UserPropertiesController extends ApiController
         if(is_null($user)) {
             return $this->failed("User doesnt have any records!");
         }
-        $properties = $user->properties()->get();
+        $properties = $user->properties()->paginate(10);
         return $this->success($properties);
     }
 }

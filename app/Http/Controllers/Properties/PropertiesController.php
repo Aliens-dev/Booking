@@ -47,7 +47,9 @@ class PropertiesController extends Controller
             }
         }
 
-        $properties = $properties->with(['type:id,title','typeOfPlace:id,title','images:id,url'])->paginate( 10);
+        $properties = $properties
+            ->with(['type:id,title','typeOfPlace:id,title','images:id,url','rules','amenities','facilities'])
+            ->paginate( 10);
         foreach ($properties as $property) {
             $property->total_ratings = $property->total_ratings();
             $property->avg_ratings = $property->avg_ratings();
