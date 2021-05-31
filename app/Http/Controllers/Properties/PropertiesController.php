@@ -171,10 +171,10 @@ class PropertiesController extends Controller
     }
 
     private function updatePivot(Request $request, Property $property, $model,$key) {
-        if($request->has($key)) {
+        if($request->has($key) && is_array($request->{$key})) {
             $property->{$key}()->delete();
             foreach ($request->{$key} as $k) {
-                $newK = $model::where('title',$k)->orWhere('title_fr',$k)->first();
+                $newK = $model::where('title',$k)->first();
                 $property->{$key}()->attach($newK->id);
             }
         }

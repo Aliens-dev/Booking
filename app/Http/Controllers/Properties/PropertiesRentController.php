@@ -65,7 +65,14 @@ class PropertiesRentController extends Controller
         if($inspect->denied()) {
             return response()->json(['success' => false ], 401);
         }
-        $property->status = 'approved';
+        $rules = [
+            'status' => 'required|in:pending,approved'
+        ];
+        $validate = Validator::make($request->all(), $rules);
+        if($validate->fails()) {
+            return response()->json(['success' => false ], 403);
+        }
+        $property->status = $request->status;
         $property->save();
         return response()->json(['success'=> true], 200);
     }
