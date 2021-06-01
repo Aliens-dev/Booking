@@ -18,7 +18,13 @@ class UserPropertiesController extends ApiController
         if(is_null($user)) {
             return $this->failed("User doesnt have any records!");
         }
-        $properties = $user->properties()->paginate(10);
+        $properties = $user->properties()
+            ->with(['type:id,title','typeOfPlace:id,title','images:id,url','rules','amenities','facilities'])
+            ->paginate(10);
+        foreach ($properties as $property) {
+            $property->total_ratings = $property->total_ratings();
+            $property->avg_ratings = $property->avg_ratings();
+        }
         return $this->success($properties);
     }
 }
