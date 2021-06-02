@@ -129,7 +129,6 @@ Route::group(['prefix' => 'property_types'], function() {
     Route::delete('/{propertyType}',[PropertyTypeController::class,'destroy']);
 });
 
-
 Route::group(['prefix' => 'type_of_place'], function() {
     Route::get('/',[TypeOfPlaceController::class,'index']);
     Route::post('/',[TypeOfPlaceController::class,'store']);

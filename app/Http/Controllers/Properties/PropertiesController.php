@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Properties;
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Models\Amenity;
 use App\Models\Facility;
@@ -17,7 +18,7 @@ use Illuminate\Validation\Rule as VALRule;
 use Kossa\AlgerianCities\Commune;
 use Kossa\AlgerianCities\Wilaya;
 
-class PropertiesController extends Controller
+class PropertiesController extends ApiController
 {
 
     public function __construct()
@@ -54,7 +55,7 @@ class PropertiesController extends Controller
             $property->total_ratings = $property->total_ratings();
             $property->avg_ratings = $property->avg_ratings();
         }
-        return response()->json(['data' => $properties]);
+        return $this->success($properties);
     }
 
     public function store(Request $request)
