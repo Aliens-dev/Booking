@@ -66,9 +66,9 @@ class PropertyPolicy
      * @param Property $property
      * @return mixed
      */
-    public function delete(Renter $renter, Property $property)
+    public function delete(User $user, Property $property)
     {
-        return  $renter->id === (int)$property->user_id;
+        return  $user->id === (int)$property->user_id;
     }
 
     /**

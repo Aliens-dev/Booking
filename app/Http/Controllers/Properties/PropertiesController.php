@@ -49,7 +49,7 @@ class PropertiesController extends ApiController
         }
 
         $properties = $properties
-            ->with(['type:id,title','typeOfPlace:id,title','images:id,url','rules','amenities','facilities'])
+            ->with(['type:id,title','typeOfPlace:id,title','images:imageable_id,imageable_type,id,url','rules','amenities','facilities'])
             ->paginate( 10);
         foreach ($properties as $property) {
             $property->total_ratings = $property->total_ratings();
