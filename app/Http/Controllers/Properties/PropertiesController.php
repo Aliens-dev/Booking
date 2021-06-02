@@ -55,7 +55,7 @@ class PropertiesController extends ApiController
             $property->total_ratings = $property->total_ratings();
             $property->avg_ratings = $property->avg_ratings();
         }
-        return response()->json(['success' => true, "message" => $message], $status);
+        return response()->json(['success' => true, "message" => $properties], 200);
     }
 
     public function store(Request $request)
