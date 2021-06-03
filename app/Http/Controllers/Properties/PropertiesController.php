@@ -167,7 +167,7 @@ class PropertiesController extends ApiController
             'price' => 'required|integer|min:200',
             'type' => 'required|exists:property_types,title',
             'type_of_place' => 'required|sometimes|exists:type_of_places,title',
-            'rooms' => 'required|min:1|integer',
+            'rooms' => 'sometimes|required|min:1|integer',
             'bedrooms' => 'required|min:1|integer',
             'bathrooms' => 'required|min:1|integer',
             'beds' => 'required|min:1|integer',
