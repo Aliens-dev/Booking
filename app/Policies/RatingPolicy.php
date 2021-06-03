@@ -15,24 +15,24 @@ class RatingPolicy
     /**
      * Determine whether the renter can update the model.
      *
-     * @param Client $client
+     * @param User $user
      * @param Rating $rating
      * @return mixed
      */
-    public function update(Client $client, Rating $rating)
+    public function update(User $user, Rating $rating)
     {
-        return $rating->client_id == $client->id;
+        return $rating->client_id == $user->id;
     }
 
     /**
      * Determine whether the renter can delete the model.
      *
-     * @param Client $client
+     * @param User $user
      * @param Rating $rating
      * @return mixed
      */
-    public function delete(Client $client, Rating $rating)
+    public function delete(User $user, Rating $rating)
     {
-        return $rating->client_id == $client->id;
+        return $rating->client_id == $user->id;
     }
 }

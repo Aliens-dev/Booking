@@ -50,19 +50,19 @@ class PropertyPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param Renter $renter
+     * @param User $user
      * @param Property $property
      * @return mixed
      */
-    public function update(Renter $renter, Property $property)
+    public function update(User $user, Property $property)
     {
-        return  $renter->id === (int)$property->user_id;
+        return  $user->id === (int)$property->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      *
-     * @param Renter $renter
+     * @param User $user
      * @param Property $property
      * @return mixed
      */
