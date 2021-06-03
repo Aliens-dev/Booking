@@ -88,7 +88,7 @@ class PropertiesController extends ApiController
         $this->updatePivot($request,$property, Facility::class,'facilities');
         $this->updatePivot($request,$property,Amenity::class,'amenities');
 
-        if($request->hasFile('images')) {
+        if($request->hasFile('images')  && is_array($request->images)) {
             $images = $request->file('images');
             foreach ($images as $image) {
                 $image_url = "uploads/property/" . $image->store($property->id);
@@ -132,6 +132,18 @@ class PropertiesController extends ApiController
 
         $property->fill($data)->save();
 
+        $this->updatePivot($request,$property,Rule::class, 'rules');
+        $this->updatePivot($request,$property, Facility::class,'facilities');
+        $this->updatePivot($request,$property,Amenity::class,'amenities');
+
+        if($request->hasFile('images') && is_array($request->images)) {
+            $property->images()->delete();
+            $images = $request->file('images');
+            foreach ($images as $image) {
+                $image_url = "uploads/property/" . $image->store($property->id);
+                $property->images()->create(['url' => $image_url]);
+            }
+        }
         return response()->json(['success' => true, 'message' => $property], 200);
     }
 
@@ -173,12 +185,17 @@ class PropertiesController extends ApiController
         ];
     }
 
-    private function updatePivot(Request $request, Property $property, $model,$key) {
+    private function updatePivot(Request $request, $property, $model,$key) {
         if($request->has($key) && is_array($request->{$key})) {
-            $property->{$key}()->delete();
+            $ids = [];
             foreach ($request->{$key} as $k) {
                 $newK = $model::where('title',$k)->first();
-                $property->{$key}()->attach($newK->id);
+                if(!is_null($newK)) {
+                    $ids[] = $newK->id;
+                }
+            }
+            if(count($ids)) {
+                $property->{$key}()->sync($ids);
             }
         }
     }
