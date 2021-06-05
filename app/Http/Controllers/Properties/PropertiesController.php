@@ -151,8 +151,12 @@ class PropertiesController extends ApiController
         return response()->json(['success' => true, 'message' => $property], 200);
     }
 
-    public function destroy(Property $property)
+    public function destroy($propertyId)
     {
+        $property = Property::find($propertyId);
+        if(is_null($property)) {
+            return response()->json(['success' => false, 'message' => 'recond not found'], 401);
+        }
         $inspect = Gate::inspect('delete', $property);
         if($inspect->denied()) {
             return response()->json(['success' => false ], 401);
