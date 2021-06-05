@@ -175,11 +175,8 @@ class PropertiesController extends ApiController
             'lat' => 'required|sometimes',
             'images' => 'sometimes|required|max:10240',
             'images.*' => 'image|mimes:jpg,bmp,png',
-            'rules' => 'sometimes|required',
             'rules.*' => 'exists:rules,title',
-            'facilities' => 'sometimes|required',
             'facilities.*' => 'exists:facilities,title',
-            'amenities' => 'sometimes|required',
             'amenities.*' => 'exists:amenities,title',
             'description' => 'required|max:500',
         ];
