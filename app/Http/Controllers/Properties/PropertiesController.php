@@ -116,8 +116,12 @@ class PropertiesController extends ApiController
         return response()->json(['success' => true, 'data' => $property], 200);
     }
 
-    public function update(Request $request, Property $property)
+    public function update(Request $request, $propertyId)
     {
+        $property = Property::find($propertyId);
+        if(is_null($property)) {
+            return response()->json(['success' => false, 'message' => 'recond not found'], 401);
+        }
         $validate = Validator::make($request->all(), $this->rules());
         if($validate->fails()) {
             return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
