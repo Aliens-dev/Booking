@@ -194,7 +194,7 @@ class PropertiesController extends ApiController
                     $ids[] = $newK->id;
                 }
             }
-            if(count($ids)) {
+            if(count($ids) > 0) {
                 $property->{$key}()->sync($ids);
             }
         }
