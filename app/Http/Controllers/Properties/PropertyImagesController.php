@@ -57,7 +57,6 @@ class PropertyImagesController extends ApiController
         }
         if($request->hasFile('images')) {
 
-            $property->images()->delete();
             $images = $request->images;
             if(is_array($images)) {
                 foreach ($images as $image) {
