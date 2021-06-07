@@ -76,11 +76,16 @@ class PropertyImagesController extends ApiController
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param Property $property
+     * @param $propertyId
      * @return JsonResponse
      */
-    public function update(Request $request, Property $property)
+    public function update(Request $request, $propertyId)
     {
+        $property = Property::find($propertyId);
+        if(is_null($property)) {
+            return response()->json(['success' => false,'message' => 'no record found'], 403);
+        }
+
         $inspect = Gate::inspect('update', $property);
         if($inspect->denied()) {
             return response()->json(['success' => false], 403);
@@ -96,7 +101,7 @@ class PropertyImagesController extends ApiController
             return response()->json(['success' => false,'errors' => $validate->errors()], 403);
         }
         if($request->hasFile('images')) {
-            $property->images()->delete();
+            $property->images()->where()->delete();
             $images = $request->images;
             foreach ($images as $image) {
                 $image_url = 'uploads/' . $image->store($property->id);

@@ -18,10 +18,15 @@ class Client extends User
     }
 
     public function properties() {
-        return $this->belongsToMany(Property::class, 'reservations');
+        return $this
+            ->belongsToMany(Property::class, 'reservations', 'client_id','property_id')
+            ->withPivot('start_time','end_time');
     }
 
     public function ratings() {
         return $this->hasMany(Rating::class, 'property_id');
     }
+
+
+
 }

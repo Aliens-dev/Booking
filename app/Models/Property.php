@@ -40,7 +40,9 @@ class Property extends Model
     }
 
     public function client() {
-        return $this->belongsToMany(Client::class,'client_properties');
+        return $this
+            ->belongsToMany(Client::class,'reservations','property_id','client_id')
+            ->withPivot('start_time','end_time');
     }
 
     public function ratings() {

@@ -15,7 +15,7 @@ class Reservation extends Model
         'start_time',
         'end_time'
     ];
-
+    protected $fillable = ['start_time','end_time','client_id', 'property_id'];
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d');
