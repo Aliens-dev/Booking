@@ -40,10 +40,12 @@ class PropertiesRentController extends Controller
         if($validate->fails()) {
             return response()->json(['success'=> false], 403);
         }
-        $start_time = Carbon::createFromFormat('Y-m-d',$request->start_time)->toDateString();
-        $end_time = Carbon::createFromFormat('Y-m-d',$request->end_time)->toDateString();
+        $start_time = date('Y-m-d',strtotime($request->start_time));
+        $end_time = date('Y-m-d',strtotime($request->end_time));
 
-        auth()->user()->properties()->attach($property->id,[
+        $client = Client::find(auth()->id());
+
+        $client->properties()->attach($property->id,[
             'start_time' => $start_time,
             'end_time' => $end_time
         ]);
