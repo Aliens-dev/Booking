@@ -56,11 +56,15 @@ class PropertiesRentController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param Property $property
+     * @param $propertyId
      * @return JsonResponse
      */
-    public function update(Request $request, Property $property)
+    public function update(Request $request, $propertyId)
     {
+        $property = Property::find($propertyId)->first();
+        if(is_null($property)) {
+            return response()->json(['success' => false,'message' => 'record not found'], 403);
+        }
         $inspect = Gate::inspect('update', $property);
         if($inspect->denied()) {
             return response()->json(['success' => false ], 401);

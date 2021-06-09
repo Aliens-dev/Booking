@@ -17,7 +17,7 @@ class UserRentController extends ApiController
         if(is_null($user)) {
             return response()->json(['success' => false, 'message' => 'no record found'], 403);
         }
-        $properties = $user->properties()->get();
+        $properties = $user->properties()->paginate(10);
 
         foreach ($properties as $property) {
             $property->reservation = [
@@ -25,7 +25,6 @@ class UserRentController extends ApiController
                 'end_time' => $property->pivot->end_time,
             ];
         }
-
         return response()->json(['success' => true, 'message' => $properties],200);
     }
 }
