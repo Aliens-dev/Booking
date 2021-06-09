@@ -23,6 +23,15 @@ class Property extends Model
         return $date->format('Y-m-d');
     }
 
+    /* Scopes */
+
+    public function scopeWithAll($query)
+    {
+        return $query
+            ->with(['type:id,title','typeOfPlace:id,title','images:imageable_id,imageable_type,id,url','rules','amenities','facilities']);
+    }
+
+    /* end Scope */
     public function type() {
         return $this->belongsTo(PropertyType::class,'type_id');
     }

@@ -19,7 +19,7 @@ class UserPropertiesController extends ApiController
             return $this->failed("User doesnt have any records!");
         }
         $properties = $user->properties()
-            ->with(['type:id,title','typeOfPlace:id,title','images:imageable_id,imageable_type,id,url','rules','amenities','facilities'])
+            ->withAll()
             ->paginate(10);
         foreach ($properties as $property) {
             $property->total_ratings = $property->total_ratings();

@@ -17,7 +17,7 @@ class UserRentController extends ApiController
         if(is_null($user)) {
             return response()->json(['success' => false, 'message' => 'no record found'], 403);
         }
-        $properties = $user->properties()->paginate(10);
+        $properties = $user->properties()->withAll()->paginate(10);
 
         foreach ($properties as $property) {
             $property->reservation = [
