@@ -67,6 +67,13 @@ class PropertiesRentController extends Controller
         return response()->json(['success'=> true], 201);
     }
 
+
+    public function show($propertyId, $rentId)
+    {
+        $reservation = Reservation::where('id',$rentId)->where('property_id', $propertyId)->first();
+        return response()->json(['success' => true, 'message' => $reservation], 200);
+    }
+
     /**
      * Update the specified resource in storage.
      *
