@@ -18,9 +18,22 @@ class PropertiesRentController extends Controller
 
     public function __construct()
     {
+        /*
         $this->middleware(['auth:users'])->only('destroy');
-        $this->middleware(['auth:users','client.auth'])->only('store');
+        $this->middleware(['auth:users','client.auth'])->only('store','verify');
         $this->middleware(['auth:users','renter.auth'])->only('update');
+        */
+    }
+
+
+    public function index(Request $request, $propertyId)
+    {
+        $property = Property::find($propertyId)->first();
+        if(is_null($property)) {
+            return response()->json(['success' => false, 'message' => 'record not found'], 403);
+        }
+        $rents = Reservation::where('property_id', $propertyId)->get();
+        return response()->json(['success' => true, 'message' => $rents], 200);
     }
 
     /**
@@ -38,7 +51,7 @@ class PropertiesRentController extends Controller
         ];
         $validate = Validator::make($request->all(), $rules);
         if($validate->fails()) {
-            return response()->json(['success'=> false], 403);
+            return response()->json(['success'=> false, 'errors' => $validate->errors()], 403);
         }
         $start_time = date('Y-m-d',strtotime($request->start_time));
         $end_time = date('Y-m-d',strtotime($request->end_time));
@@ -69,20 +82,50 @@ class PropertiesRentController extends Controller
         }
         $inspect = Gate::inspect('update', $property);
         if($inspect->denied()) {
-            return response()->json(['success' => false ], 401);
+            return response()->json(['success' => false, 'message' => 'unauthorized access'], 401);
         }
         $rules = [
             'status' => 'required|in:pending,approved'
         ];
         $validate = Validator::make($request->all(), $rules);
         if($validate->fails()) {
-            return response()->json(['success' => false ], 403);
+            return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
         }
         $property->status = $request->status;
         $property->save();
         return response()->json(['success'=> true], 200);
     }
 
+    public function verify(Request $request, $rentId)
+    {
+        $reservation = Reservation::where('id', $rentId)->where('client_id', auth()->id())->first();
+        if(is_null($reservation)) {
+            return response()->json(['success' => false, 'message' => 'no record found'], 403);
+        }
+        $inspect = Gate::inspect('verify', $reservation);
+        if($inspect->denied()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized Access'], 401);
+        }
+        $rules = [
+            'receipt' => 'required|image|mimes:jpg,png'
+        ];
+
+        $validate = Validator::make($request->all(), $rules);
+
+        if($validate->fails()) {
+            return response()->json(['success' => false, 'message' => $validate->errors()], 403);
+        }
+        $receipt = '';
+        if($request->hasFile('receipt')) {
+            $property = Property::find($reservation->property_id)->first();
+            $receipt =  "uploads/property/" .
+                    $request->file('receipt')
+                    ->storeAs($property->id . '/reservation', $request->file('receipt')->getClientOriginalName());
+        }
+        $reservation->receipt = $receipt;
+        $reservation->save();
+        return response()->json(['success' => true, 'message' => $reservation], 200);
+    }
     /**
      * Remove the specified resource from storage.
      *

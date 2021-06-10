@@ -30,8 +30,8 @@ class Property extends Model
         return $query
             ->with(['type:id,title','typeOfPlace:id,title','images:imageable_id,imageable_type,id,url','rules','amenities','facilities']);
     }
-
     /* end Scope */
+
     public function type() {
         return $this->belongsTo(PropertyType::class,'type_id');
     }
@@ -51,7 +51,7 @@ class Property extends Model
     public function client() {
         return $this
             ->belongsToMany(Client::class,'reservations','property_id','client_id')
-            ->withPivot('start_time','end_time');
+            ->withPivot('id','receipt','start_time','end_time');
     }
 
     public function ratings() {
@@ -61,9 +61,11 @@ class Property extends Model
     public function avg_ratings() {
         return $this->ratings()->avg('rating');
     }
+
     public function total_ratings() {
         return $this->ratings()->sum('rating');
     }
+
     public function rules()
     {
         return $this->belongsToMany(Rule::class,'property_rules');
@@ -73,11 +75,11 @@ class Property extends Model
     {
         return $this->belongsToMany(Facility::class,'facility_properties');
     }
+
     public function amenities()
     {
         return $this->belongsToMany(Amenity::class,'amenity_properties');
     }
-
 
     public function hasAttribute($attr)
     {

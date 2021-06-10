@@ -21,6 +21,8 @@ class UserRentController extends ApiController
 
         foreach ($properties as $property) {
             $property->reservation = [
+                'id' => (int)$property->pivot->id,
+                #'receipt' => url('/') . '/' . $property->pivot->receipt,
                 'start_time' => $property->pivot->start_time,
                 'end_time' => $property->pivot->end_time,
             ];

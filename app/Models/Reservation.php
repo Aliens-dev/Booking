@@ -8,7 +8,7 @@ use DateTimeInterface;
 class Reservation extends Model
 {
     use HasFactory;
-    protected $hidden = ['pivot'];
+    protected $hidden = ['updated_at'];
     protected $dates = [
         'created_at',
         'updated_at',
@@ -19,5 +19,10 @@ class Reservation extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d');
+    }
+
+    public function getReceiptAttribute($value)
+    {
+        return url('/') . '/' . $value;
     }
 }

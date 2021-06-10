@@ -29,10 +29,11 @@ use App\Http\Controllers\Users\UserRentController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::post('login', [UserLoginController::class, 'login']);
+Route::post('login', [UserLoginController::class, 'login'])->name('user.login');
 Route::post('logout', [UserLoginController::class, 'logout']);
 
 Route::get('wilayas', [StateController::class, 'index'])->name('wilaya.index');
+
 Route::group(['prefix' => 'users'], function() {
     Route::get('/', [UserAccountController::class, 'index'])->name('users.index');
     Route::get('/{id}', [UserAccountController::class, 'show'])->name('users.show');
@@ -44,8 +45,6 @@ Route::group(['prefix' => 'users'], function() {
 
     Route::get('/{userId}/properties', [UserPropertiesController::class, 'index'])->name('user.properties.index');
     Route::get('/{userId}/rent', [UserRentController::class, 'index']);
-
-
     /* rating users */
     Route::post('/{user}/rating', [UserRatingsController::class, 'store'])->name('user.rating.store');
     Route::patch('/{renterId}/rating/{ratingId}', [UserRatingsController::class, 'update'])->name('user.rating.update');
@@ -66,8 +65,10 @@ Route::group(['prefix' => 'properties'], function() {
 
     /* renting */
     Route::get('/{property}/rent', [PropertiesRentController::class, 'index'])->name('property.rent.index');
+    Route::get('/{property}/rent/{rentId}', [PropertiesRentController::class, 'show'])->name('property.rent.show');
     Route::post('/{property}/rent', [PropertiesRentController::class, 'store'])->name('property.rent.store');
     Route::patch('/{property}/rent', [PropertiesRentController::class, 'update'])->name('property.rent.update');
+    Route::post('/{property}/rent_verify', [PropertiesRentController::class, 'verify'])->name('property.rent.verify');
     Route::delete('/{property}/rent', [PropertiesRentController::class, 'destroy'])->name('property.rent.destroy');
 
     /* rating properties */
