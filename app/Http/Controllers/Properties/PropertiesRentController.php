@@ -18,20 +18,18 @@ class PropertiesRentController extends Controller
 
     public function __construct()
     {
-        /*
         $this->middleware(['auth:users'])->only('destroy');
-        $this->middleware(['auth:users','client.auth'])->only('store','verify');
-        $this->middleware(['auth:users','renter.auth'])->only('update');
-        */
+        $this->middleware(['auth:users','client.auth'])->only('store','verify','update');
+        #$this->middleware(['auth:users','renter.auth'])->only('update');
     }
 
 
-    public function index(Request $request, $propertyId)
+    /**
+     * @param $propertyId
+     * @return JsonResponse
+     */
+    public function index($propertyId)
     {
-        $property = Property::find($propertyId)->first();
-        if(is_null($property)) {
-            return response()->json(['success' => false, 'message' => 'record not found'], 403);
-        }
         $rents = Reservation::where('property_id', $propertyId)->get();
         return response()->json(['success' => true, 'message' => $rents], 200);
     }
@@ -40,12 +38,19 @@ class PropertiesRentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @param Property $property
+     * @param $propertyId
      * @return JsonResponse
      */
-    public function store(Request $request, Property $property)
+    public function store(Request $request, $propertyId)
     {
-        $rules=  [
+        $property = Property::find($propertyId);
+        if (is_null($property)) {
+            return response()->json(['success' => false,'message' => 'record not found'], 403);
+        }
+        if($property->status != 'available') {
+            return response()->json(['success' => false, 'message' => 'property is not available'], 403);
+        }
+        $rules = [
             'start_time' => 'required|date|after_or_equal:'. date('Y-m-d'),
             'end_time' => 'required|date|after:start_time',
         ];
@@ -60,14 +65,18 @@ class PropertiesRentController extends Controller
 
         $client->properties()->attach($property->id,[
             'start_time' => $start_time,
-            'end_time' => $end_time
+            'end_time' => $end_time,
         ]);
         $property->status = 'pending';
         $property->save();
         return response()->json(['success'=> true], 201);
     }
 
-
+    /**
+     * @param $propertyId
+     * @param $rentId
+     * @return JsonResponse
+     */
     public function show($propertyId, $rentId)
     {
         $reservation = Reservation::where('id',$rentId)->where('property_id', $propertyId)->first();
@@ -79,33 +88,17 @@ class PropertiesRentController extends Controller
      *
      * @param Request $request
      * @param $propertyId
+     * @param $rentId
      * @return JsonResponse
      */
-    public function update(Request $request, $propertyId)
-    {
-        $property = Property::find($propertyId)->first();
-        if(is_null($property)) {
-            return response()->json(['success' => false,'message' => 'record not found'], 403);
-        }
-        $inspect = Gate::inspect('update', $property);
-        if($inspect->denied()) {
-            return response()->json(['success' => false, 'message' => 'unauthorized access'], 401);
-        }
-        $rules = [
-            'status' => 'required|in:pending,approved'
-        ];
-        $validate = Validator::make($request->all(), $rules);
-        if($validate->fails()) {
-            return response()->json(['success' => false, 'errors' => $validate->errors()], 403);
-        }
-        $property->status = $request->status;
-        $property->save();
-        return response()->json(['success'=> true], 200);
-    }
 
-    public function verify(Request $request, $rentId)
+    public function verify(Request $request, $propertyId, $rentId)
     {
-        $reservation = Reservation::where('id', $rentId)->where('client_id', auth()->id())->first();
+        $reservation = Reservation::
+            where('id', $rentId)
+            ->where('client_id', auth()->id())
+            ->where('property_id',$propertyId)
+            ->first();
         if(is_null($reservation)) {
             return response()->json(['success' => false, 'message' => 'no record found'], 403);
         }
@@ -124,13 +117,61 @@ class PropertiesRentController extends Controller
         }
         $receipt = '';
         if($request->hasFile('receipt')) {
-            $property = Property::find($reservation->property_id)->first();
+            $property = Property::find($reservation->property_id);
             $receipt =  "uploads/property/" .
                     $request->file('receipt')
                     ->storeAs($property->id . '/reservation', $request->file('receipt')->getClientOriginalName());
         }
+        $reservation->receipt_status = 'waiting_approval';
         $reservation->receipt = $receipt;
         $reservation->save();
+        return response()->json(['success' => true, 'message' => $reservation], 200);
+    }
+
+    public function approve(Request $request, $propertyId, $rentId)
+    {
+        $reservation = Reservation::
+            where('id', $rentId)
+            ->where('property_id',$propertyId)
+            ->first();
+        if(is_null($reservation)) {
+            return response()->json(['success' => false, 'message' => 'no record found'], 403);
+        }
+        $inspect = Gate::inspect('approve', $reservation);
+        if($inspect->denied()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized Access'], 401);
+        }
+
+        $reservation->receipt_status = 'approved';
+        $reservation->save();
+
+        $property = Property::find($propertyId);
+        $property->status = 'approved';
+        $property->save();
+
+        return response()->json(['success' => true, 'message' => $reservation], 200);
+    }
+
+    public function decline(Request $request, $propertyId, $rentId)
+    {
+        $reservation = Reservation::
+        where('id', $rentId)
+            ->where('property_id',$propertyId)
+            ->first();
+        if(is_null($reservation)) {
+            return response()->json(['success' => false, 'message' => 'no record found'], 403);
+        }
+        $inspect = Gate::inspect('decline', $reservation);
+        if($inspect->denied()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized Access'], 401);
+        }
+        $reservation->receipt_status = 'declined';
+        $reservation->save();
+
+        $property = Property::find($propertyId);
+        $property->status = 'available';
+        $property->save();
+
         return response()->json(['success' => true, 'message' => $reservation], 200);
     }
     /**
@@ -152,6 +193,7 @@ class PropertiesRentController extends Controller
         }
         $property->status = 'available';
         $property->save();
+
         return response()->json(['success'=> true], 200);
     }
 }

@@ -25,7 +25,7 @@ class PropertiesRatingController extends ApiController
      */
     public function store(Request $request, $propertyId)
     {
-        $property = Property::find($propertyId)->first();
+        $property = Property::find($propertyId);
         $rules = [
             'rating'=> 'required|integer|min:1|max:5',
         ];
@@ -45,12 +45,12 @@ class PropertiesRatingController extends ApiController
      */
     public function update(Request $request, $propertyId, $ratingId)
     {
-        $rating = Rating::find($ratingId)->first();
+        $rating = Rating::find($ratingId);
         $inspect = Gate::inspect('update', $rating);
         if($inspect->denied()) {
             return $this->failed($inspect->message(), 401);
         }
-        $property = Property::find($propertyId)->first();
+        $property = Property::find($propertyId);
         $rules = [
             'rating'=> 'required|integer|min:1|max:5',
         ];
@@ -74,12 +74,12 @@ class PropertiesRatingController extends ApiController
      */
     public function destroy($propertyId, $ratingId)
     {
-        $rating = Rating::find($ratingId)->first();
+        $rating = Rating::find($ratingId);
         $inspect = Gate::inspect('delete', $rating);
         if($inspect->denied()) {
             return $this->failed($inspect->message(), 401);
         }
-        $property = Property::find($propertyId)->first();
+        $property = Property::find($propertyId);
         $property->ratings()->where('id', $ratingId)->delete();
         return response()->json(['success' => true], 200);
     }

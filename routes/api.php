@@ -64,12 +64,17 @@ Route::group(['prefix' => 'properties'], function() {
     Route::get('/{id}', [PropertiesController::class, 'get'])->name('property.get');
 
     /* renting */
-    Route::get('/{property}/rent', [PropertiesRentController::class, 'index'])->name('property.rent.index');
-    Route::get('/{property}/rent/{rentId}', [PropertiesRentController::class, 'show'])->name('property.rent.show');
-    Route::post('/{property}/rent', [PropertiesRentController::class, 'store'])->name('property.rent.store');
-    Route::patch('/{property}/rent', [PropertiesRentController::class, 'update'])->name('property.rent.update');
-    Route::post('/{property}/rent_verify', [PropertiesRentController::class, 'verify'])->name('property.rent.verify');
-    Route::delete('/{property}/rent', [PropertiesRentController::class, 'destroy'])->name('property.rent.destroy');
+
+    Route::get('/{propertyId}/rent', [PropertiesRentController::class, 'index'])->name('property.rent.index');
+
+    Route::post('/{propertyId}/rent/{rentId}/verify', [PropertiesRentController::class, 'verify'])->name('property.rent.verify');
+    Route::post('/{propertyId}/rent/{rentId}/approve', [PropertiesRentController::class, 'approve'])->name('property.rent.approve');
+    Route::post('/{propertyId}/rent/{rentId}/decline', [PropertiesRentController::class, 'decline'])->name('property.rent.decline');
+    Route::get('/{propertyId}/rent/{rentId}', [PropertiesRentController::class, 'show'])->name('property.rent.show');
+    Route::post('/{propertyId}/rent', [PropertiesRentController::class, 'store'])->name('property.rent.store');
+    Route::delete('/{propertyId}/rent', [PropertiesRentController::class, 'destroy'])->name('property.rent.destroy');
+    #Route::patch('/{property}/rent', [PropertiesRentController::class, 'update'])->name('property.rent.update');
+
 
     /* rating properties */
     Route::post('/{property}/rating', [PropertiesRatingController::class, 'store'])->name('property.rating.store');

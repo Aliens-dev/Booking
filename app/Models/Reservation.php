@@ -15,14 +15,9 @@ class Reservation extends Model
         'start_time',
         'end_time'
     ];
-    protected $fillable = ['start_time','end_time','receipt','client_id', 'property_id'];
+    protected $fillable = ['start_time','end_time','receipt','receipt_status','client_id', 'property_id'];
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d');
-    }
-
-    public function getReceiptAttribute($value)
-    {
-        return url('/') . '/' . $value;
     }
 }

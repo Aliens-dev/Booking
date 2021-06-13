@@ -11,18 +11,29 @@ use App\Models\User;
 class UserRentController extends ApiController
 {
 
+    public function __construct()
+    {
+        $this->middleware(['auth:users', 'client.auth']);
+    }
+
     public function index($id)
     {
+        /*
+        if(auth()->id() != $id) {
+            return response()->json(['success' => false,'message' => 'unauthorized access'], 401);
+        }
+        */
         $user = Client::find($id);
         if(is_null($user)) {
             return response()->json(['success' => false, 'message' => 'no record found'], 403);
         }
+
         $properties = $user->properties()->withAll()->paginate(10);
 
         foreach ($properties as $property) {
             $property->reservation = [
                 'id' => (int)$property->pivot->id,
-                #'receipt' => url('/') . '/' . $property->pivot->receipt,
+                'receipt' => url('/') . '/' . $property->pivot->receipt,
                 'start_time' => $property->pivot->start_time,
                 'end_time' => $property->pivot->end_time,
             ];
