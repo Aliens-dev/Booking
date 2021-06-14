@@ -67,7 +67,7 @@ class PropertiesRentController extends Controller
             'start_time' => $start_time,
             'end_time' => $end_time,
         ]);
-        $property->status = 'pending';
+        $property->status = 'unavailable';
         $property->save();
         return response()->json(['success'=> true], 201);
     }

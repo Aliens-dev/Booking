@@ -20,7 +20,7 @@ class CreateReservationsTable extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->string('receipt')->nullable();
-            $table->string('receipt_status')->default('not_uploaded');
+            $table->string('receipt_status')->default('waiting_receipt');
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
