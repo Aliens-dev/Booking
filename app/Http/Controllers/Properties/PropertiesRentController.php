@@ -18,11 +18,9 @@ class PropertiesRentController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth:users'])->only('destroy');
-        $this->middleware(['auth:users','client.auth'])->only('store','verify','update');
-        #$this->middleware(['auth:users','renter.auth'])->only('update');
+        $this->middleware(['auth:users']);
+        $this->middleware(['auth:users','client.auth'])->except("show");
     }
-
 
     /**
      * @param $propertyId
@@ -66,6 +64,7 @@ class PropertiesRentController extends Controller
         $client->properties()->attach($property->id,[
             'start_time' => $start_time,
             'end_time' => $end_time,
+            'renter_id' => $property->user_id,
         ]);
         $property->status = 'unavailable';
         $property->save();
@@ -80,6 +79,14 @@ class PropertiesRentController extends Controller
     public function show($propertyId, $rentId)
     {
         $reservation = Reservation::where('id',$rentId)->where('property_id', $propertyId)->first();
+        if(is_null($reservation)) {
+            return response()->json(['success' => false,'message' => 'record not found'], 403);
+        }
+
+        if(auth()->user()->user_role === 'renter' && $reservation->receipt_status == 'approved') {
+            return response()->json(['success' => false,'message' => 'not authorized'], 401);
+        }
+
         return response()->json(['success' => true, 'message' => $reservation], 200);
     }
 

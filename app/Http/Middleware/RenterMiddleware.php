@@ -17,7 +17,7 @@ class RenterMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if((auth()->user() instanceof Admin) || (auth()->user()->user_role === 'renter')) {
+        if((auth()->user()->user_role === 'admin') || (auth()->user()->user_role === 'renter')) {
             return $next($request);
         }
         return response()->json(['success' => false,'message' => 'Unauthorized Access'], 401);

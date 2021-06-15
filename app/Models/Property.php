@@ -51,7 +51,7 @@ class Property extends Model
     public function client() {
         return $this
             ->belongsToMany(Client::class,'reservations','property_id','client_id')
-            ->withPivot('id','receipt','start_time','end_time');
+            ->withPivot('id','client_id','renter_id','receipt_url','receipt_status','created_at','start_time','end_time');
     }
 
     public function ratings() {

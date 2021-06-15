@@ -17,9 +17,10 @@ class CreateReservationsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('renter_id');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            $table->string('receipt')->nullable();
+            $table->string('receipt_url')->nullable()->default("");
             $table->string('receipt_status')->default('waiting_receipt');
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('users')->cascadeOnDelete();

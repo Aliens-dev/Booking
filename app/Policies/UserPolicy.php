@@ -20,7 +20,7 @@ class UserPolicy
      */
     public function create(User $user, User $model)
     {
-        return $user->id == $model->id;
+        return $user->id == $model->id || $user->user_role === 'admin';
     }
 
     /**
@@ -32,7 +32,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        return $user->id == $model->id;
+        return $user->id == $model->id || $user->user_role === 'admin';
     }
 
     /**
@@ -44,7 +44,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model)
     {
-        return $user->id == $model->id;
+        return $user->id == $model->id || $user->user_role === 'admin';
     }
 
     /**

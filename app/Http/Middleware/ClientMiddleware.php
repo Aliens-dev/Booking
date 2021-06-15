@@ -18,7 +18,7 @@ class ClientMiddleware
     public function handle(Request $request, Closure $next)
     {
 
-        if( (auth()->user() instanceof Admin) || (auth()->user()->user_role === 'client')) {
+        if( (auth()->user()->user_role === 'admin') || (auth()->user()->user_role === 'client')) {
             return $next($request);
         }
         return response()->json(['success' => false,'message' => 'Unauthorized Access'], 401);

@@ -68,7 +68,7 @@ class PropertyPolicy
      */
     public function delete(User $user, Property $property)
     {
-        return  $user->id === (int)$property->user_id;
+        return  $user->id === (int)$property->user_id || $user->user_role === 'admin';
     }
 
     /**
@@ -80,7 +80,7 @@ class PropertyPolicy
      */
     public function cancelRent(User $user, Property $property)
     {
-        return  $user->properties->contains($property) || (int)$property->user_id === $user->id;
+        return  $user->properties->contains($property) || (int)$property->user_id === $user->id || $user->user_role === 'admin';
     }
 
 

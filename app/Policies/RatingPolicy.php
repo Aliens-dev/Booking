@@ -33,6 +33,6 @@ class RatingPolicy
      */
     public function delete(User $user, Rating $rating)
     {
-        return $rating->client_id == $user->id;
+        return $rating->client_id == $user->id || $user->user_role === 'admin';
     }
 }

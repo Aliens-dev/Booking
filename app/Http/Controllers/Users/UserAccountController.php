@@ -42,7 +42,7 @@ class UserAccountController extends ApiController
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed',
             'phone_number' => 'required|sometimes|regex:/^0[567]{1}[0-9]{8}$/i',
-            'user_role' => 'required|in:client,renter',
+            'user_role' => 'required|in:client,renter,admin',
             'dob' => 'required|date',
             'profile_pic' => 'required|sometimes|image|mimes:jpg,png',
             'identity_pic' => 'required|sometimes|image|mimes:jpg,png',
@@ -51,6 +51,9 @@ class UserAccountController extends ApiController
         $validated = Validator::make($request->all(), $rules);
         if($validated->fails()) {
             return response()->json(['success' => false, 'errors' =>$validated->errors()], 403);
+        }
+        if($request->user_role === 'admin' && !auth()->user()->user_role == 'admin') {
+            return response()->json(['success' => false, 'message' =>'unauthorized'], 401);
         }
         $data = $validated->validated();
         $data['password'] = bcrypt($data['password']);

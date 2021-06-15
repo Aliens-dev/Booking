@@ -20,7 +20,7 @@ class Client extends User
     public function properties() {
         return $this
             ->belongsToMany(Property::class, 'reservations', 'client_id','property_id')
-            ->withPivot('id','receipt','start_time','end_time');
+            ->withPivot('id','client_id','renter_id','receipt_url','receipt_status','created_at','start_time','end_time');
     }
 
     public function ratings() {

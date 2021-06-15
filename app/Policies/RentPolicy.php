@@ -11,22 +11,19 @@ class RentPolicy
 {
     use HandlesAuthorization;
 
+
     public function verify(User $user, Reservation $reservation)
     {
-        return (int)$user->id === (int)$reservation->client_id;
+        return (int)$user->id === (int)$reservation->client_id || $user->user_role === 'admin';
     }
 
     public function approve(User $user, Reservation $reservation)
     {
-        $property = Property::find($reservation->property_id)->first();
-        $renter_id = $property->user_id;
-        return (int)$user->id === (int)$renter_id;
+        return (int)$user->id === (int)$reservation->client_id || $user->user_role === 'admin';
     }
 
     public function decline(User $user, Reservation $reservation)
     {
-        $property = Property::find($reservation->property_id)->first();
-        $renter_id = $property->user_id;
-        return (int)$user->id === (int)$renter_id;
+        return (int)$user->id === (int)$reservation->client_id || $user->user_role === 'admin';
     }
 }
