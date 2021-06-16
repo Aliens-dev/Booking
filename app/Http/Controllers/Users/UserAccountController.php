@@ -24,7 +24,7 @@ class UserAccountController extends ApiController
 
     public function index(Request $request)
     {
-        $users = User::paginate(10);
+        $users = User::basic()->paginate(10);
         return $this->success($users);
     }
 
@@ -86,9 +86,9 @@ class UserAccountController extends ApiController
 
     public function show(Request $request, $id)
     {
-        $user = User::find($id);
+        $user = User::basic()->find($id);
         if(is_null($user)) {
-            return $this->failed();
+            return response()->json(['success'=> true, 'message' => 'no record found'], 403);
         }
         return $this->success($user);
     }

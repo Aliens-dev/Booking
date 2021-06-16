@@ -8,6 +8,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 */
 
+use App\Http\Controllers\Admins\AdminAccountController;
 use App\Http\Controllers\Amenities\AmenitiesController;
 use App\Http\Controllers\Facilities\FacilitiesController;
 use App\Http\Controllers\Locations\StateController;
@@ -56,6 +57,12 @@ Route::group(['prefix' => 'users'], function() {
         Route::get('/{userId}/ratings/properties', [UserRentController::class, 'index']);
     */
 });
+
+Route::group(['prefix' => 'admin'], function() {
+    Route::post('login', [AdminAccountController::class,'login']);
+    Route::post('logout', [AdminAccountController::class, 'logout']);
+});
+
 
 
 Route::group(['prefix' => 'properties'], function() {

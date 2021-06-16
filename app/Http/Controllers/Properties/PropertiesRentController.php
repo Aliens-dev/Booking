@@ -83,7 +83,7 @@ class PropertiesRentController extends Controller
             return response()->json(['success' => false,'message' => 'record not found'], 403);
         }
 
-        if(auth()->user()->user_role === 'renter' && $reservation->receipt_status == 'approved') {
+        if(auth()->user()->user_role === 'renter' && $reservation->receipt_status !== 'approved') {
             return response()->json(['success' => false,'message' => 'not authorized'], 401);
         }
 
@@ -130,7 +130,7 @@ class PropertiesRentController extends Controller
                     ->storeAs($property->id . '/reservation', $request->file('receipt')->getClientOriginalName());
         }
         $reservation->receipt_status = 'waiting_approval';
-        $reservation->receipt = $receipt;
+        $reservation->receipt_url = $receipt;
         $reservation->save();
         return response()->json(['success' => true, 'message' => $reservation], 200);
     }

@@ -59,6 +59,11 @@ class User extends Authenticatable implements JWTSubject
         return url('/') . '/' . $value;
     }
 
+    public function scopeBasic($query)
+    {
+        return $query->where('user_role', '!=', 'admin');
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
