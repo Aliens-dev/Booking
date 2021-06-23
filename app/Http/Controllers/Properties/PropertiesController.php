@@ -32,7 +32,7 @@ class PropertiesController extends ApiController
         $properties = Property::query();
 
         foreach ($request->all() as $key=>$val) {
-            $allowedKeys = ['title','bedrooms','bathrooms','beds','rooms','property_type','type_of_place','state','city'];
+            $allowedKeys = ['title','bedrooms','bathrooms','beds','price','rooms','property_type','type_of_place','state','city'];
             if(in_array($key, $allowedKeys)) {
                 if($key == 'title') {
                     $properties->where('title','like', "%". $val."%");
@@ -44,7 +44,14 @@ class PropertiesController extends ApiController
                     $properties->whereHas('typeOfPlace', function($query) use ($request,$val) {
                         $query->where('title', $val)->orWhere('title_fr', $val);
                     });
-                } else {
+                }else if($key == 'price') {
+                    $priceMinMax = explode(',',$request->price);
+                    if(count($priceMinMax) == 1) {
+                        $properties->where($key,$val);
+                    }else {
+                        $properties->whereBetween($key,[$priceMinMax[0], $priceMinMax[1]]);
+                    }
+                }else {
                     $properties->where($key,$val);
                 }
             }
