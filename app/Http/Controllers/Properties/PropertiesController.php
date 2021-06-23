@@ -32,18 +32,20 @@ class PropertiesController extends ApiController
         $properties = Property::query();
 
         foreach ($request->all() as $key=>$val) {
-            $allowedKeys = ['title','bedrooms','bathrooms','beds','rooms','type','state','city'];
+            $allowedKeys = ['title','bedrooms','bathrooms','beds','rooms','property_type','type_of_place','state','city'];
             if(in_array($key, $allowedKeys)) {
                 if($key == 'title') {
                     $properties->where('title','like', "%". $val."%");
-                }else if($key == 'type') {
-                    $properties->whereHas($key, function($query) use ($request,$val) {
+                }else if($key == 'property_type') {
+                    $properties->whereHas('type', function($query) use ($request,$val) {
                         $query->where('title', $val)->orWhere('title_fr', $val);
                     });
-                }else {
-                    if(Property::hasAttribute($key)) {
-                        $properties->where($key,$val);
-                    }
+                }else if($key == 'type_of_place') {
+                    $properties->whereHas('typeOfPlace', function($query) use ($request,$val) {
+                        $query->where('title', $val)->orWhere('title_fr', $val);
+                    });
+                } else {
+                    $properties->where($key,$val);
                 }
             }
         }
