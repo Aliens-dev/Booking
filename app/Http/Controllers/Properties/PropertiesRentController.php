@@ -28,7 +28,7 @@ class PropertiesRentController extends Controller
      */
     public function index($propertyId)
     {
-        $rents = Reservation::where('property_id', $propertyId)->get();
+        $rents = Reservation::where('property_id', $propertyId)->paginate(10);
         return response()->json(['success' => true, 'message' => $rents], 200);
     }
 

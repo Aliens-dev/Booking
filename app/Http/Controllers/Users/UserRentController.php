@@ -27,12 +27,12 @@ class UserRentController extends ApiController
         }
         $reservations = [];
         if($user->user_role == 'client') {
-            $reservations = Reservation::where('client_id', $id)->get();
+            $reservations = Reservation::where('client_id', $id)->paginate(10);
         }else if($user->user_role == 'renter') {
-            $reservations = Reservation::where('renter_id', $id)->where('receipt_status', 'approved')->get();
+            $reservations = Reservation::where('renter_id', $id)->where('receipt_status', 'approved')->paginate(10);
         }
         foreach ($reservations as $reservation) {
-            $reservation->property = Property::find($reservation->property_id);
+            $reservation->property = Property::withAll()->find($reservation->property_id);
         }
         return response()->json(['success' => true, 'message' => $reservations],200);
 
