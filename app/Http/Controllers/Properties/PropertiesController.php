@@ -32,24 +32,22 @@ class PropertiesController extends ApiController
         $properties = Property::query();
 
         foreach ($request->all() as $key=>$val) {
-            $allowedKeys = ['title','bedrooms','bathrooms','beds','price','rooms','property_type','type_of_place','state','city'];
+            $allowedKeys = ['title','bedrooms','bathrooms','beds','price','rooms','state','city','type','typeOfPlace','amenities','facilities','rules'];
             if(in_array($key, $allowedKeys)) {
+                $relationShip = ['type','typeOfPlace','amenities','facilities','rules'];
+                $rangeFields = ['bedrooms','bathrooms','beds','price','rooms'];
                 if($key == 'title') {
                     $properties->where('title','like', "%". $val."%");
-                }else if($key == 'property_type') {
-                    $properties->whereHas('type', function($query) use ($request,$val) {
+                }else if(in_array($key,$relationShip)) {
+                    $properties->whereHas($key, function($query) use ($request,$val) {
                         $query->where('title', $val)->orWhere('title_fr', $val);
                     });
-                }else if($key == 'type_of_place') {
-                    $properties->whereHas('typeOfPlace', function($query) use ($request,$val) {
-                        $query->where('title', $val)->orWhere('title_fr', $val);
-                    });
-                }else if($key == 'price') {
-                    $priceMinMax = explode(',',$request->price);
-                    if(count($priceMinMax) == 1) {
-                        $properties->where($key,$val);
+                }else if(in_array($key,$rangeFields)) {
+                    $minMax = explode(',',$request->$key);
+                    if(count($minMax) == 1) {
+                        $properties->where($key,'>=',$val);
                     }else {
-                        $properties->whereBetween($key,[$priceMinMax[0], $priceMinMax[1]]);
+                        $properties->whereBetween($key,[$minMax[0], $minMax[1]]);
                     }
                 }else {
                     $properties->where($key,$val);
