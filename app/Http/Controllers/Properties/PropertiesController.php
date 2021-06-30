@@ -39,9 +39,19 @@ class PropertiesController extends ApiController
                 if($key == 'title') {
                     $properties->where('title','like', "%". $val."%");
                 }else if(in_array($key,$relationShip)) {
-                    $properties->whereHas($key, function($query) use ($request,$val) {
-                        $query->where('title', $val)->orWhere('title_fr', $val);
-                    });
+                    $values = explode(',', $request->$key);
+                    if(count($values) == 1) {
+                        $properties->whereHas($key, function($query) use ($request,$val) {
+                            $query->where('title', $val)->orWhere('title_fr', $val);
+                        });
+                    }else {
+                        foreach ($values as $value) {
+                            $properties->orWhereHas($key, function($query) use ($request,$value) {
+                                $query->where('title', $value)->orWhere('title_fr', $value);
+                            });
+                        }
+                    }
+
                 }else if(in_array($key,$rangeFields)) {
                     $minMax = explode(',',$request->$key);
                     if(count($minMax) == 1) {
