@@ -55,7 +55,7 @@ class PropertiesController extends ApiController
                 }else if(in_array($key,$rangeFields)) {
                     $minMax = explode(',',$request->$key);
                     if(count($minMax) == 1) {
-                        $properties->where($key,'>=',$val);
+                        $properties->where($key,'==',$val);
                     }else {
                         $properties->whereBetween($key,[$minMax[0], $minMax[1]]);
                     }
