@@ -48,7 +48,6 @@ class User extends Authenticatable implements JWTSubject
     ];
 
 
-
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d');
@@ -62,6 +61,13 @@ class User extends Authenticatable implements JWTSubject
     public function scopeBasic($query)
     {
         return $query->where('user_role', '!=', 'admin');
+    }
+
+    public function scopeVerified($query){
+        return $query->where('verified',1);
+    }
+    public function scopeNotVerified($query){
+        return $query->where('verified',0);
     }
 
     public function getJWTIdentifier()

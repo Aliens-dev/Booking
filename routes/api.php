@@ -32,18 +32,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', [UserLoginController::class, 'login'])->name('user.login');
 Route::post('logout', [UserLoginController::class, 'logout']);
-
 Route::get('wilayas', [StateController::class, 'index'])->name('wilaya.index');
 
 Route::group(['prefix' => 'users'], function() {
     Route::get('/', [UserAccountController::class, 'index'])->name('users.index');
     Route::get('/{id}', [UserAccountController::class, 'show'])->name('users.show');
+    Route::post('/{id}/approve', [UserAccountController::class,"approve"])->name('user.approve');
     Route::post('/', [UserAccountController::class, 'store']);
     Route::post('email/verify/{id}', 'VerificationController@verify')->name('verification.verify');
     Route::post('email/resend', 'VerificationController@resend')->name('verification.resend');
-    Route::patch('/{user}', [UserAccountController::class, 'update']);
+    Route::patch('/{userId}', [UserAccountController::class, 'update']);
+    Route::patch('/{userId}/password_reset', [UserAccountController::class, 'password_reset']);
     Route::delete('/{user}', [UserAccountController::class, 'destroy']);
-
+    
     Route::get('/{userId}/properties', [UserPropertiesController::class, 'index'])->name('user.properties.index');
     Route::get('/{userId}/rent', [UserRentController::class, 'index']);
     /* rating users */
