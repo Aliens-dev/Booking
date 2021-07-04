@@ -131,6 +131,8 @@ class PropertiesController extends ApiController
         if(is_null($property)) {
             return response()->json(['success' => false, 'errors' => 'No record found'], 403);
         }
+        $property->total_ratings = $property->total_ratings();
+        $property->avg_ratings = $property->avg_ratings();
         return response()->json(['success' => true, 'data' => $property], 200);
     }
 
@@ -138,7 +140,7 @@ class PropertiesController extends ApiController
     {
         $property = Property::find($propertyId);
         if(is_null($property)) {
-            return response()->json(['success' => false, 'message' => 'recond not found'], 401);
+            return response()->json(['success' => false, 'message' => 'recond not found'], 403);
         }
         $validate = Validator::make($request->all(), $this->rules());
         if($validate->fails()) {

@@ -24,4 +24,13 @@ class Renter extends User
     public function ratings() {
         return $this->morphMany(Rating::class, 'rateable','rateable_type','rateable_id');
     }
+
+    public function avg_ratings() {
+        return $this->ratings()->avg('rating');
+    }
+    
+    public function total_ratings() {
+        return $this->ratings()->count('rating');
+    }
+
 }

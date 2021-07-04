@@ -19,9 +19,19 @@ class UserRatingsController extends ApiController
 {
     public function __construct()
     {
-        $this->middleware(['auth:users','client.auth']);
+        $this->middleware(['auth:users','client.auth'])->except("index");
     }
 
+    public function index($userId) {
+        $user = Renter::find($userId);
+        if(is_null($user)) {
+            return response()->json(['success' => false, 'message' => 'recond not found'], 403);
+        }
+        $user->total_ratings = $user->total_ratings();
+        $user->avg_ratings = $user->avg_ratings();
+        return response()->json(['success' => true, 'data' => $user], 200);
+    }
+    
     /**
      * @param Request $request
      * @param $userId
@@ -36,6 +46,12 @@ class UserRatingsController extends ApiController
         $validate = Validator::make($request->all(), $rules);
         if($validate->fails()) {
             return response()->json(['success' => false], 403);
+        }
+        $rating = $user->ratings()->where(['client_id' => auth()->id()])->first();
+        if(! is_null($rating)) {
+            $rating->rating = $request->rating;
+            $rating->save();
+            return response()->json(['success' => true], 200);
         }
         $user->ratings()->create(['rating' => $request->rating,'client_id' => auth()->id()]);
         return response()->json(['success' => true], 201);

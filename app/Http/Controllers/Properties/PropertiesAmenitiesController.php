@@ -41,16 +41,14 @@ class PropertiesAmenitiesController extends ApiController
         return $this->success('successfully added',201);
     }
 
-    public function destroy(Request $request, $propertyId, $amenityId)
+    public function destroy($propertyId, $amenityId)
     {
         $property = Property::find($propertyId);
-        if(is_null($property)) {
-            return $this->failed("No record found");
-        }
         $amenity = Amenity::find($amenityId);
-        if(is_null($amenity)) {
+        if(is_null($property) || is_null($amenity)) {
             return $this->failed("No record found");
         }
+        
         $property->amenities()->detach($amenity->id);
         return $this->success("successfully deleted");
     }

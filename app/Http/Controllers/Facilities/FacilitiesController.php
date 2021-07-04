@@ -23,9 +23,9 @@ class FacilitiesController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'title' => 'sometimes|required|string',
+            'title' => 'required|string',
             'title_fr' => 'sometimes|required|string',
-            'description' => 'sometimes|required|string',
+            'description' => 'required|string',
             'description_fr' => 'sometimes|required|string'
         ];
         $validate = Validator::make($request->all(),$rules);

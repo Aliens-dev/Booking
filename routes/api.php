@@ -48,6 +48,7 @@ Route::group(['prefix' => 'users'], function() {
     Route::get('/{userId}/properties', [UserPropertiesController::class, 'index'])->name('user.properties.index');
     Route::get('/{userId}/rent', [UserRentController::class, 'index']);
     /* rating users */
+    Route::get('/{user}/rating', [UserRatingsController::class, 'index'])->name('user.rating.show');
     Route::post('/{user}/rating', [UserRatingsController::class, 'store'])->name('user.rating.store');
     Route::patch('/{renterId}/rating/{ratingId}', [UserRatingsController::class, 'update'])->name('user.rating.update');
     Route::delete('/{renterId}/rating/{ratingId}', [UserRatingsController::class, 'destroy'])->name('user.rating.destroy.single');
@@ -63,8 +64,6 @@ Route::group(['prefix' => 'admin'], function() {
     Route::post('login', [AdminAccountController::class,'login']);
     Route::post('logout', [AdminAccountController::class, 'logout']);
 });
-
-
 
 Route::group(['prefix' => 'properties'], function() {
     Route::get('/', [PropertiesController::class, 'index'])->name('property.index');

@@ -33,6 +33,12 @@ class PropertiesRatingController extends ApiController
         if($validate->fails()) {
             return response()->json(['success' => false], 403);
         }
+        $rating = $property->ratings()->where('client_id', auth()->id())->first();
+        if(! is_null($rating)) {
+            $rating->rating = $request->rating;
+            $rating->save();
+            return response()->json(['success' => true], 201); 
+        }
         $property->ratings()->create(['rating' => $request->rating,'client_id' => auth()->id()]);
         return response()->json(['success' => true], 201);
     }

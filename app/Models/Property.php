@@ -63,7 +63,7 @@ class Property extends Model
     }
 
     public function total_ratings() {
-        return $this->ratings()->sum('rating');
+        return $this->ratings()->count('rating');
     }
 
     public function rules()
