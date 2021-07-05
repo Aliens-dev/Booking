@@ -28,7 +28,7 @@ class Property extends Model
     public function scopeWithAll($query)
     {
         return $query
-            ->with(['type:id,title','typeOfPlace:id,title','images:imageable_id,imageable_type,id,url','rules','amenities','facilities']);
+            ->with(['type:id,title,title_fr','typeOfPlace:id,title,title_fr','images:imageable_id,imageable_type,id,url','rules','amenities','facilities']);
     }
     /* end Scope */
 
