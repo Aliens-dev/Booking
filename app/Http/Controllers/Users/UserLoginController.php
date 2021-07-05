@@ -37,6 +37,12 @@ class UserLoginController extends ApiController
             return $this->failed("Wrong email or password");
         }
         $user = Auth::user();
+        /*
+        TODO : remove this when implemented in frontEnd
+        if (! $user->isEmailVerified()) {
+            return $this->failed("Email not verified, please check your email to verify");
+        }
+        */
         return $this->success([
             'token' => $token,
             'user' => $user,

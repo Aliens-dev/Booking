@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\ApiController;
 use App\Models\Renter;
 use App\Models\User;
+use App\Notifications\UserRegister;
 use Carbon\Carbon;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -61,8 +63,8 @@ class UserAccountController extends ApiController
         $data = $validated->validated();
         $data['password'] = bcrypt($data['password']);
         $user = User::create($data);
-        $user->email_verified_at = Carbon::now();
         $user->save();
+        // TODO: uncomment this when implemented in the frontend
         //$user->sendEmailVerificationNotification();
 
         if($request->has('profile_pic')) {
@@ -82,7 +84,6 @@ class UserAccountController extends ApiController
                         $user->user_role
                     );
         }
-
         $user->save();
         return response()->json(['success'=> true, 'message' => $user], 201);
     }
@@ -117,7 +118,7 @@ class UserAccountController extends ApiController
             'lname' => 'required|min:3|max:30',
             'email' => [
                 'required',
-                'email', 
+                'email',
                 Rule::unique('users')->ignore($user->id)
             ],
             'password' => 'required',
@@ -193,7 +194,7 @@ class UserAccountController extends ApiController
 
         $user->password = bcrypt($request->password);
         $user->save();
-        
+
         return response()->json(['success'=> true, 'message' => $user], 200);
     }
 
@@ -205,7 +206,7 @@ class UserAccountController extends ApiController
         $user->verified = 1;
         $user->save();
         return response()->json(['success' => true], 200);
-    } 
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -217,7 +218,7 @@ class UserAccountController extends ApiController
     {
         $user = User::find($userId);
         if(is_null($user)) {
-            return response()->json(['success' => false, 'message' => "no record found"], 403); 
+            return response()->json(['success' => false, 'message' => "no record found"], 403);
         }
         $inspect = Gate::inspect('delete', $user);
         if($inspect->denied()) {
