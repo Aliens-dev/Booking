@@ -31,7 +31,7 @@ class UserRatingsController extends ApiController
         $user->avg_ratings = $user->avg_ratings();
         return response()->json(['success' => true, 'data' => $user], 200);
     }
-    
+
     /**
      * @param Request $request
      * @param $userId

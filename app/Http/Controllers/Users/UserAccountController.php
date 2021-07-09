@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Notifications\UserRegister;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,7 +30,15 @@ class UserAccountController extends ApiController
 
     public function index(Request $request)
     {
-        $users = User::basic()->verified()->paginate(10);
+        if(Auth::user() && Auth::user()->user_role == 'admin') {
+            $users =  User::basic()->verified()->paginate(10);
+            foreach ($users as $user) {
+                $user->id_pic = $user->identity_pic;
+            }
+        }else {
+            $users = User::basic()->verified()->paginate(10);
+        }
+
         return $this->success($users);
     }
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -22,7 +23,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','updated_at', 'email_verified_at', 'identity_pic'
+        'password', 'remember_token','updated_at', 'email_verified_at','identity_pic'
     ];
 
     /**
@@ -59,6 +60,12 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return url('/') . '/' . $value;
     }
 
+    public function getIdentityPicAttribute($value)
+    {
+        return url('/') . '/' . $value;
+    }
+
+
     public function isEmailVerified()
     {
         return !is_null($this->email_verified_at);
@@ -67,7 +74,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $query->where('user_role', '!=', 'admin');
     }
-
+    public function updateHidden()
+    {
+        return $this->setHidden(['password', 'remember_token','updated_at', 'email_verified_at']);
+    }
     public function scopeVerified($query){
         return $query->where('verified',1);
     }
