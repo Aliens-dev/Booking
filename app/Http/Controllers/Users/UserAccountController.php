@@ -103,6 +103,8 @@ class UserAccountController extends ApiController
         if(is_null($user)) {
             return response()->json(['success'=> true, 'message' => 'no record found'], 403);
         }
+
+        $user->id_pic = $user->identity_pic;
         return $this->success($user);
     }
 

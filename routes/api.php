@@ -9,6 +9,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 */
 
 use App\Http\Controllers\Admins\AdminAccountController;
+use App\Http\Controllers\Admins\RentController;
 use App\Http\Controllers\Amenities\AmenitiesController;
 use App\Http\Controllers\Facilities\FacilitiesController;
 use App\Http\Controllers\Locations\StateController;
@@ -117,6 +118,9 @@ Route::group(['prefix' => 'properties'], function() {
     Route::patch('/{property}', [PropertiesController::class, 'update'])->name('property.update');
     Route::delete('/{property}', [PropertiesController::class, 'destroy'])->name('property.destroy');
 });
+
+
+Route::get('rent', [RentController::class,'index']);
 
 Route::group(['prefix' => 'rules'], function() {
     Route::get('/',[RulesController::class,'index']);
