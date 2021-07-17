@@ -31,7 +31,7 @@ class UserAccountController extends ApiController
     public function index(Request $request)
     {
         if(Auth::user() && Auth::user()->user_role == 'admin') {
-            $users =  User::basic()->verified()->paginate(10);
+            $users =  User::basic()->paginate(10);
             foreach ($users as $user) {
                 $user->id_pic = $user->identity_pic;
             }
